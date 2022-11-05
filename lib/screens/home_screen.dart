@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/sections/accounts_section.dart';
+import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,6 +13,7 @@ class HomeScreen extends StatelessWidget {
         children: const [
           OverviewSection(),
           AccountsSection(),
+          GoalsSection(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
