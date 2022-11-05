@@ -15,31 +15,37 @@ class AccountsSection extends StatelessWidget {
             'Contas',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          _Divider(),
-          Account(name: 'Itau', balance: 1000.00, expected: 200),
-          _Divider(),
-          Account(name: 'Nubank', balance: 1500.00, expected: 300),
-          _Divider(),
+          Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+          _Account(name: 'Itau', balance: 1000.00, expected: 200),
+          Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+          _Account(name: 'Nubank', balance: 1500.00, expected: 300),
+          Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
         ],
       ),
     ));
   }
 }
 
-class Account extends StatelessWidget {
+class _Account extends StatelessWidget {
   final String name;
   final double balance;
   final double expected;
 
-  const Account(
-      {super.key,
-      required this.name,
-      required this.balance,
-      required this.expected});
+  const _Account(
+      {required this.name, required this.balance, required this.expected});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +60,7 @@ class Account extends StatelessWidget {
                 name,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -74,7 +80,7 @@ class Account extends StatelessWidget {
                 'R\$ $balance',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -89,22 +95,6 @@ class Account extends StatelessWidget {
             ],
           )
         ],
-      ),
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  const _Divider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
-      child: Divider(
-        color: Colors.grey,
-        height: 2,
-        thickness: 2,
       ),
     );
   }
