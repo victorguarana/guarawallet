@@ -11,7 +11,10 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: const [
-          OverviewSection(),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: OverviewSection(),
+          ),
           AccountsSection(),
           GoalsSection(),
         ],
