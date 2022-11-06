@@ -10,21 +10,15 @@ class GoalsSection extends StatelessWidget {
         cardContent: Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
-        children: const [
-          Text(
-            'Metas',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Divider(color: Colors.grey, thickness: 1),
-          _Goal(name: 'Viagem', balance: 100, missing: 200, expected: 300),
-          Divider(color: Colors.grey, thickness: 1),
-          _Goal(
+        children: [
+          Text('Metas', style: Theme.of(context).textTheme.titleMedium),
+          const Divider(color: Colors.grey, thickness: 1),
+          const _Goal(
+              name: 'Viagem', balance: 100, missing: 200, expected: 300),
+          const Divider(color: Colors.grey, thickness: 1),
+          const _Goal(
               name: 'Casamento', balance: 3500, missing: 1500, expected: 5000),
-          Divider(color: Colors.grey, thickness: 1),
+          const Divider(color: Colors.grey, thickness: 1),
         ],
       ),
     ));
@@ -54,19 +48,9 @@ class _Goal extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
               Text(
                 'R\$ $balance',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ],
           ),
@@ -98,14 +82,8 @@ class _Goal extends StatelessWidget {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  Text(
-                    'R\$ $missing',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
+                  Text('R\$ $missing',
+                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
               Column(
@@ -118,14 +96,8 @@ class _Goal extends StatelessWidget {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  Text(
-                    'R\$ $expected',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
+                  Text('R\$ $expected',
+                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               )
             ],

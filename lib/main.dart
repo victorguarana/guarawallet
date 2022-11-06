@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/screens/home_screen.dart';
+import 'package:guarawallet/themes/my_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wallet',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
+      theme: myTheme,
       home: const HomeScreen(),
     );
   }

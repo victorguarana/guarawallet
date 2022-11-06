@@ -10,29 +10,13 @@ class AccountsSection extends StatelessWidget {
         cardContent: Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
-        children: const [
-          Text(
-            'Contas',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Divider(
-            color: Colors.grey,
-            thickness: 1,
-          ),
-          _Account(name: 'Itau', balance: 1000.00, expected: 200),
-          Divider(
-            color: Colors.grey,
-            thickness: 1,
-          ),
-          _Account(name: 'Nubank', balance: 1500.00, expected: 300),
-          Divider(
-            color: Colors.grey,
-            thickness: 1,
-          ),
+        children: [
+          Text('Contas', style: Theme.of(context).textTheme.titleMedium),
+          const Divider(color: Colors.grey, thickness: 1),
+          const _Account(name: 'Itau', balance: 1000.00, expected: 200),
+          const Divider(color: Colors.grey, thickness: 1),
+          const _Account(name: 'Nubank', balance: 1500.00, expected: 300),
+          const Divider(color: Colors.grey, thickness: 1),
         ],
       ),
     ));
@@ -56,42 +40,15 @@ class _Account extends StatelessWidget {
         children: [
           Column(
             children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                'Saldo esp.:',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
+              Text(name),
+              Text('Saldo esp.:', style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           Column(
             children: [
-              Text(
-                'R\$ $balance',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'R\$ $expected',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
+              Text('R\$ $balance'),
+              Text('R\$ $expected',
+                  style: Theme.of(context).textTheme.bodySmall),
             ],
           )
         ],
