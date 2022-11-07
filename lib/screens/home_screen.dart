@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
+import 'package:guarawallet/components/sections/transactions_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class HomeScreen extends StatelessWidget {
             child: OverviewSection(),
           ),
           AccountsSection(),
+          TransactionsSection(),
           GoalsSection(),
         ],
       ),
