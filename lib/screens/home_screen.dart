@@ -4,6 +4,7 @@ import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/transactions_section.dart';
+import 'package:guarawallet/screens/transaction_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -30,7 +31,12 @@ class HomeScreen extends StatelessWidget {
             label: 'Adicionar transação',
             child: const Icon(Icons.note_add),
             onTap: () {
-              print('Apertou para criar transação');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (contextNew) => const TransactionFormScreen(),
+                ),
+              );
             },
           ),
         ],
