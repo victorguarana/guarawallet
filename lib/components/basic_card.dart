@@ -10,6 +10,7 @@ class BasicCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Container(
         width: 400,
+        height: 200,
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(15),

@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
           ),
           AccountsSection(),
           TransactionsSection(),
-          GoalsSection(),
+          // GoalsSection(),
         ],
       ),
       floatingActionButton: SpeedDial(
