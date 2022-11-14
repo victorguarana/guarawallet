@@ -8,14 +8,20 @@ class TransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(name),
-            Text('R\$ $value'),
-          ],
-        ));
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(name),
+              Text('R\$ $value'),
+            ],
+          ),
+        ),
+        const Divider(color: Colors.grey, thickness: 1),
+      ],
+    );
   }
 }
