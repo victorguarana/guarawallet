@@ -9,6 +9,7 @@ class TransactionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BasicCard(
+      cardHeight: 200,
       cardContent: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -33,7 +34,6 @@ class TransactionsSection extends StatelessWidget {
                           style: TextStyle(fontSize: 32),
                         )
                       ]));
-                    // break;
                     case ConnectionState.waiting:
                       return Center(
                           child: Column(children: const [
@@ -43,7 +43,6 @@ class TransactionsSection extends StatelessWidget {
                           style: TextStyle(fontSize: 32),
                         )
                       ]));
-                      break;
                     case ConnectionState.active:
                       return Center(
                           child: Column(children: const [
@@ -53,13 +52,12 @@ class TransactionsSection extends StatelessWidget {
                           style: TextStyle(fontSize: 32),
                         )
                       ]));
-                      break;
                     case ConnectionState.done:
                       if (snapshot.hasData && itens != null) {
                         if (itens.isNotEmpty) {
                           return ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(0),
                               itemCount: itens.length,
                               itemBuilder: (BuildContext context, int index) {
                                 final TransactionWidget transaction =
