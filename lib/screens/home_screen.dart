@@ -13,14 +13,21 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: const [
-          Padding(
+        children: [
+          const Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: OverviewSection(),
           ),
-          AccountsSection(),
-          TransactionsSection(),
-          GoalsSection(),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.only(bottom: 120),
+              children: const [
+                AccountsSection(),
+                TransactionsSection(),
+                GoalsSection(),
+              ],
+            ),
+          )
         ],
       ),
       floatingActionButton: SpeedDial(
