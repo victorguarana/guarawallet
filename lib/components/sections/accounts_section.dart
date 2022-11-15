@@ -55,7 +55,7 @@ class AccountsSection extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: const [
                               Icon(
-                                Icons.error_outline,
+                                Icons.no_accounts,
                                 size: 68,
                               ),
                               Text(
