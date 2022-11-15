@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/basic_card.dart';
+import 'package:guarawallet/components/real_text.dart';
 
 class GoalsSection extends StatelessWidget {
   const GoalsSection({super.key});
@@ -49,8 +50,8 @@ class _Goal extends StatelessWidget {
               Text(
                 name,
               ),
-              Text(
-                'R\$ $balance',
+              RealText(
+                value: balance,
               ),
             ],
           ),
@@ -82,7 +83,8 @@ class _Goal extends StatelessWidget {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  Text('R\$ $missing',
+                  RealText(
+                      value: missing,
                       style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
@@ -96,8 +98,10 @@ class _Goal extends StatelessWidget {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  Text('R\$ $expected',
-                      style: Theme.of(context).textTheme.bodySmall),
+                  RealText(
+                    value: expected,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               )
             ],

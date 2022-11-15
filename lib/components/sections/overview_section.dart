@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guarawallet/components/real_text.dart';
 
 class OverviewSection extends StatelessWidget {
   const OverviewSection({Key? key}) : super(key: key);
@@ -30,8 +31,8 @@ class SummaryWidget extends StatelessWidget {
             'Saldo Geral:',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          Text(
-            'R\$ 2500,00',
+          RealText(
+            value: 2500,
             style: TextStyle(
                 color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
           ),
@@ -44,8 +45,8 @@ class SummaryWidget extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 12),
           ),
-          Text(
-            'R\$ 500,00',
+          RealText(
+            value: 500,
             style: TextStyle(
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
