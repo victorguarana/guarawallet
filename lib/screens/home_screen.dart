@@ -4,7 +4,8 @@ import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/transactions_section.dart';
-import 'package:guarawallet/screens/transaction_screen.dart';
+import 'package:guarawallet/screens/account_form_screen.dart';
+import 'package:guarawallet/screens/transaction_form_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -36,12 +37,24 @@ class HomeScreen extends StatelessWidget {
         children: [
           SpeedDialChild(
             label: 'Adicionar transação',
-            child: const Icon(Icons.note_add),
+            child: const Icon(Icons.swap_horiz),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (contextNew) => const TransactionFormScreen(),
+                ),
+              );
+            },
+          ),
+          SpeedDialChild(
+            label: 'Adicionar conta',
+            child: const Icon(Icons.account_balance),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (contextNew) => const AccountFormScreen(),
                 ),
               );
             },

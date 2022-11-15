@@ -68,7 +68,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    print(nameController.text);
                     TransactionDao().save(TransactionWidget(
                         name: nameController.text,
                         value: double.parse(valueController.text)));
