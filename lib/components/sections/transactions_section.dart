@@ -9,7 +9,7 @@ class TransactionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BasicCard(
-      cardHeight: 200,
+      cardHeight: 230,
       cardContent: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -26,32 +26,20 @@ class TransactionsSection extends StatelessWidget {
                   List<TransactionWidget>? itens = snapshot.data;
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
-                      return Center(
-                          child: Column(children: const [
-                        CircularProgressIndicator(),
-                        Text(
-                          'Carregando.',
-                          style: TextStyle(fontSize: 32),
-                        )
-                      ]));
+                      return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.grey,
+                              backgroundColor: Colors.white));
                     case ConnectionState.waiting:
-                      return Center(
-                          child: Column(children: const [
-                        CircularProgressIndicator(),
-                        Text(
-                          'Carregando.',
-                          style: TextStyle(fontSize: 32),
-                        )
-                      ]));
+                      return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.grey,
+                              backgroundColor: Colors.white));
                     case ConnectionState.active:
-                      return Center(
-                          child: Column(children: const [
-                        CircularProgressIndicator(),
-                        Text(
-                          'Carregando.',
-                          style: TextStyle(fontSize: 32),
-                        )
-                      ]));
+                      return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.grey,
+                              backgroundColor: Colors.white));
                     case ConnectionState.done:
                       if (snapshot.hasData && itens != null) {
                         if (itens.isNotEmpty) {
