@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guarawallet/components/real_text.dart';
 
 // TODO: Add Account and others fields to this widget
 class TransactionWidget extends StatelessWidget {
@@ -16,7 +17,7 @@ class TransactionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(name),
-              Text('R\$ $value'),
+              RealText(value: value),
             ],
           ),
         ),

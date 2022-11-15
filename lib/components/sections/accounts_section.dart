@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/basic_card.dart';
+import 'package:guarawallet/components/real_text.dart';
 
 class AccountsSection extends StatelessWidget {
   const AccountsSection({super.key});
@@ -46,9 +47,11 @@ class _Account extends StatelessWidget {
           ),
           Column(
             children: [
-              Text('R\$ $balance'),
-              Text('R\$ $expected',
-                  style: Theme.of(context).textTheme.bodySmall),
+              RealText(value: balance),
+              RealText(
+                value: expected,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
           )
         ],
