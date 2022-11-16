@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -29,11 +30,31 @@ class AccountDao {
     return toList(result);
   }
 
+  Future<List<DropdownMenuItem>> findAllNames() async {
+    final Database database = await getDataBase();
+    final List<Map<String, dynamic>> result =
+        await database.query(_tablename, columns: [_name]);
+    return toMenuItem(result);
+  }
+
   Future<List<AccountWidget>> find(String name) async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database
         .query(_tablename, where: '$_name = ?', whereArgs: [name]);
     return toList(result);
+  }
+
+  List<DropdownMenuItem> toMenuItem(List<Map<String, dynamic>> accountMaps) {
+    List<DropdownMenuItem> menuItems = [];
+    for (Map<String, dynamic> accountMap in accountMaps) {
+      final DropdownMenuItem accountItem = DropdownMenuItem(
+        onTap: () {},
+        value: accountMap[_name],
+        child: Text(accountMap[_name]),
+      );
+      menuItems.add(accountItem);
+    }
+    return menuItems;
   }
 
   List<AccountWidget> toList(List<Map<String, dynamic>> accountMaps) {

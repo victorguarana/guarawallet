@@ -5,7 +5,12 @@ import 'package:guarawallet/components/real_text.dart';
 class TransactionWidget extends StatelessWidget {
   final String name;
   final double value;
-  const TransactionWidget({super.key, required this.name, required this.value});
+  final String account;
+  const TransactionWidget(
+      {super.key,
+      required this.name,
+      required this.value,
+      required this.account});
 
   @override
   Widget build(BuildContext context) {

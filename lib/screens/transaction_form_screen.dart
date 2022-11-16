@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
+import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/transaction_dao.dart';
 
 class TransactionFormScreen extends StatefulWidget {
@@ -10,13 +11,32 @@ class TransactionFormScreen extends StatefulWidget {
 }
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
+  String _selectedAccount = '';
+
+  final List<DropdownMenuItem> _accountsList = [];
+
   TextEditingController nameController = TextEditingController();
   TextEditingController valueController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadAccounts();
+  }
+
+  void _loadAccounts() async {
+    List<DropdownMenuItem> menuItemList = await AccountDao().findAllNames();
+    for (DropdownMenuItem menuItem in menuItemList) {
+      setState(() {
+        _accountsList.add(menuItem);
+      });
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
-  bool nameValidator(String? name) {
-    if (name != null && name.isEmpty) {
+  bool fieldValidator(String? field) {
+    if (field != null && field.isEmpty) {
       return true;
     }
     return false;
@@ -39,7 +59,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: (String? value) {
-                    if (nameValidator(value)) {
+                    if (fieldValidator(value)) {
                       return 'Insira o nome da Transação';
                     }
                     return null;
@@ -55,6 +75,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  validator: (String? value) {
+                    if (fieldValidator(value)) {
+                      return 'Insira o valor da Transação';
+                    }
+                    return null;
+                  },
                   keyboardType: TextInputType.number,
                   controller: valueController,
                   textAlign: TextAlign.center,
@@ -65,12 +91,34 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField(
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Insira a conta da Transação';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    _selectedAccount = value;
+                  },
+                  items: _accountsList,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.account_balance),
+                    hintText: 'Conta',
+                    filled: true,
+                  ),
+                ),
+              ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     TransactionDao().save(TransactionWidget(
-                        name: nameController.text,
-                        value: double.parse(valueController.text)));
+                      name: nameController.text,
+                      value: double.parse(valueController.text),
+                      account: _selectedAccount!,
+                    ));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Criando uma nova Transação'),

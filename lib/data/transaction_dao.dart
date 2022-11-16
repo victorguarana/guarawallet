@@ -4,11 +4,12 @@ import 'package:sqflite/sqlite_api.dart';
 
 class TransactionDao {
   static const String tableSQL =
-      'CREATE TABLE $_tablename ($_name TEXT, $_value REAL) ';
+      'CREATE TABLE $_tablename ($_name TEXT, $_value REAL, $_account TEXT) ';
   static const String _tablename = 'transactionTable';
 
   static const String _name = 'name';
   static const String _value = 'value';
+  static const String _account = 'account';
 
   save(TransactionWidget transactionWidget) async {
     final Database database = await getDataBase();
@@ -42,6 +43,7 @@ class TransactionDao {
       final TransactionWidget transactionWidget = TransactionWidget(
         name: transactionMap[_name],
         value: transactionMap[_value],
+        account: transactionMap[_account],
       );
       transactionWidgets.add(transactionWidget);
     }
@@ -53,6 +55,7 @@ class TransactionDao {
     final Map<String, dynamic> map = {};
     map[_name] = transactionWidget.name;
     map[_value] = transactionWidget.value;
+    map[_account] = transactionWidget.account;
     return map;
   }
 
