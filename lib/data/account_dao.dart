@@ -4,11 +4,12 @@ import 'package:guarawallet/data/database.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class AccountDao {
-  static const String tableSQL = '''CREATE TABLE $_tablename (
+  static const String tableSQL = '''CREATE TABLE $_tableName (
           $_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          $_name TEXT NOT NULL, $_currentBalance REAL NOT NULL,
+          $_name TEXT NOT NULL,
+          $_currentBalance REAL NOT NULL,
           $_expectedBalance REAL NOT NULL) ''';
-  static const String _tablename = 'accountTable';
+  static const String _tableName = 'accountTable';
 
   static const String _id = 'id';
   static const String _name = 'name';
@@ -20,36 +21,42 @@ class AccountDao {
 
     if (accountWidget.id == null) {
       return await database.insert(
-          _tablename, toMap(accountWidget).remove(_id));
+          _tableName, toMap(accountWidget).remove(_id));
     }
 
     var itemExists = await find(accountWidget.id!);
     if (itemExists.isEmpty) {
       return await database.insert(
-          _tablename, toMap(accountWidget).remove(_id));
+          _tableName, toMap(accountWidget).remove(_id));
     } else {
-      return await database.update(_tablename, toMap(accountWidget),
+      return await database.update(_tableName, toMap(accountWidget),
           where: '$_id = ?', whereArgs: [accountWidget.id]);
     }
   }
 
+  // TODO: Move this logic to other class?
+  debitAccount(Transaction txn, double value, String accountName) async {
+    await txn.rawUpdate(
+        'UPDATE ${AccountDao._tableName} SET current_balance = current_balance - $value WHERE name = "$accountName"');
+  }
+
   Future<List<AccountWidget>> findAll() async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result = await database.query(_tablename);
+    final List<Map<String, dynamic>> result = await database.query(_tableName);
     return toList(result);
   }
 
   Future<List<DropdownMenuItem>> findAllNames() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result =
-        await database.query(_tablename, columns: [_name]);
+        await database.query(_tableName, columns: [_id, _name]);
     return toMenuItem(result);
   }
 
   Future<List<AccountWidget>> find(int id) async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result =
-        await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
+        await database.query(_tableName, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
   }
 
@@ -58,7 +65,6 @@ class AccountDao {
     List<DropdownMenuItem> menuItems = [];
     for (Map<String, dynamic> accountMap in accountMaps) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
-        onTap: () {},
         value: accountMap[_name],
         child: Center(child: Text(accountMap[_name])),
       );
@@ -94,6 +100,6 @@ class AccountDao {
 
   deleteAll() async {
     final Database database = await getDataBase();
-    await database.delete(_tablename);
+    await database.delete(_tableName);
   }
 }
