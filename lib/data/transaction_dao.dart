@@ -4,7 +4,6 @@ import 'package:guarawallet/data/database.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class TransactionDao {
-  // TODO: Check why tables are not created with onCreate param (try to update version?)
   static const String tableSQL =
       'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL) ';
   static const String _tablename = 'transactionTable';

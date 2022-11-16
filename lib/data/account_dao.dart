@@ -37,7 +37,7 @@ class AccountDao {
   // TODO: Move this logic to other class?
   debitAccount(Transaction txn, double value, String accountName) async {
     await txn.rawUpdate(
-        'UPDATE ${AccountDao._tableName} SET current_balance = current_balance - $value WHERE name = "$accountName"');
+        'UPDATE ${AccountDao._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
   }
 
   Future<List<AccountWidget>> findAll() async {
