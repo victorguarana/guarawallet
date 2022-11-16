@@ -94,6 +94,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButtonFormField(
+                  isExpanded: true,
                   validator: (value) {
                     if (value == null) {
                       return 'Insira a conta da Transação';

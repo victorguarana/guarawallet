@@ -44,13 +44,14 @@ class AccountDao {
     return toList(result);
   }
 
+// TODO: This method should be here?
   List<DropdownMenuItem> toMenuItem(List<Map<String, dynamic>> accountMaps) {
     List<DropdownMenuItem> menuItems = [];
     for (Map<String, dynamic> accountMap in accountMaps) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
         onTap: () {},
         value: accountMap[_name],
-        child: Text(accountMap[_name]),
+        child: Center(child: Text(accountMap[_name])),
       );
       menuItems.add(accountItem);
     }
