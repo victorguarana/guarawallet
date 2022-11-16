@@ -18,11 +18,21 @@ class TransactionWidget extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             children: [
-              Text(name),
-              RealText(value: value),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(name),
+                  RealText(value: value),
+                ],
+              ),
+              Row(children: [
+                Text(
+                  account,
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              ])
             ],
           ),
         ),
