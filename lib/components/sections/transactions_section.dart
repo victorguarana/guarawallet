@@ -53,18 +53,22 @@ class TransactionsSection extends StatelessWidget {
                                 return transaction;
                               });
                         }
-                        // Caso não tenha dados do BD
                         return Center(
-                            child: Column(children: const [
-                          Icon(
-                            Icons.error_outline,
-                            size: 128,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: const [
+                              Icon(
+                                Icons.swap_horiz,
+                                size: 68,
+                              ),
+                              Text(
+                                'Não existem transações.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
+                              )
+                            ],
                           ),
-                          Text(
-                            'Não há comentários.',
-                            style: TextStyle(fontSize: 32),
-                          )
-                        ]));
+                        );
                       }
                       return Center(
                           child: Column(children: const [

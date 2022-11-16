@@ -3,9 +3,16 @@ import 'package:guarawallet/components/real_text.dart';
 
 // TODO: Add Account and others fields to this widget
 class TransactionWidget extends StatelessWidget {
+  final int? id;
   final String name;
   final double value;
-  const TransactionWidget({super.key, required this.name, required this.value});
+  final String account;
+  const TransactionWidget(
+      {super.key,
+      this.id,
+      required this.name,
+      required this.value,
+      required this.account});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +20,21 @@ class TransactionWidget extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             children: [
-              Text(name),
-              RealText(value: value),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(name),
+                  RealText(value: value),
+                ],
+              ),
+              Row(children: [
+                Text(
+                  account,
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              ])
             ],
           ),
         ),

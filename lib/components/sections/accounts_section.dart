@@ -49,7 +49,6 @@ class AccountsSection extends StatelessWidget {
                                 return account;
                               });
                         }
-                        // Caso não tenha dados do BD
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
