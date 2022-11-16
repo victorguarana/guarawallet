@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/components/real_text.dart';
 
 class AccountWidget extends StatelessWidget {
+  final int? id;
   final String name;
   final double currentBalance;
   final double expectedBalance;
 
   const AccountWidget(
       {super.key,
+      this.id,
       required this.name,
       required this.currentBalance,
       required this.expectedBalance});

@@ -11,7 +11,7 @@ class TransactionFormScreen extends StatefulWidget {
 }
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
-  String _selectedAccount = '';
+  String? _selectedAccount;
 
   final List<DropdownMenuItem> _accountsList = [];
 

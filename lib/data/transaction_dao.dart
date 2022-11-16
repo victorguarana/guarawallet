@@ -3,10 +3,13 @@ import 'package:guarawallet/data/database.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class TransactionDao {
+  // TODO: Check why tables are not created with onCreate param (try to update version?)
+  // TODO: Use transaction (from db, not transação) to save a new transaction and update currentBalance
   static const String tableSQL =
-      'CREATE TABLE $_tablename ($_name TEXT, $_value REAL, $_account TEXT) ';
+      'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL) ';
   static const String _tablename = 'transactionTable';
 
+  static const String _id = 'id';
   static const String _name = 'name';
   static const String _value = 'value';
   static const String _account = 'account';
@@ -14,9 +17,15 @@ class TransactionDao {
   save(TransactionWidget transactionWidget) async {
     final Database database = await getDataBase();
 
-    var itemExists = await find(transactionWidget.name);
+    if (transactionWidget.id == null) {
+      return await database.insert(
+          _tablename, toMap(transactionWidget).remove(_id));
+    }
+
+    var itemExists = await find(transactionWidget.id!);
     if (itemExists.isEmpty) {
-      return await database.insert(_tablename, toMap(transactionWidget));
+      return await database.insert(
+          _tablename, toMap(transactionWidget).remove(_id));
     } else {
       return await database.update(_tablename, toMap(transactionWidget),
           where: '$_name = ?', whereArgs: [transactionWidget.name]);
@@ -29,10 +38,10 @@ class TransactionDao {
     return toList(result);
   }
 
-  Future<List<TransactionWidget>> find(String name) async {
+  Future<List<TransactionWidget>> find(int id) async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result = await database
-        .query(_tablename, where: '$_name = ?', whereArgs: [name]);
+    final List<Map<String, dynamic>> result =
+        await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
   }
 
@@ -41,6 +50,7 @@ class TransactionDao {
 
     for (Map<String, dynamic> transactionMap in transactionMaps) {
       final TransactionWidget transactionWidget = TransactionWidget(
+        id: transactionMap[_id],
         name: transactionMap[_name],
         value: transactionMap[_value],
         account: transactionMap[_account],
@@ -53,6 +63,7 @@ class TransactionDao {
 
   Map<String, dynamic> toMap(TransactionWidget transactionWidget) {
     final Map<String, dynamic> map = {};
+    map[_id] = transactionWidget.id;
     map[_name] = transactionWidget.name;
     map[_value] = transactionWidget.value;
     map[_account] = transactionWidget.account;

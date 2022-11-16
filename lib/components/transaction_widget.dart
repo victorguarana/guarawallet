@@ -3,11 +3,13 @@ import 'package:guarawallet/components/real_text.dart';
 
 // TODO: Add Account and others fields to this widget
 class TransactionWidget extends StatelessWidget {
+  final int? id;
   final String name;
   final double value;
   final String account;
   const TransactionWidget(
       {super.key,
+      this.id,
       required this.name,
       required this.value,
       required this.account});

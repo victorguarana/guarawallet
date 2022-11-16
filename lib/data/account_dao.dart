@@ -4,10 +4,13 @@ import 'package:guarawallet/data/database.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class AccountDao {
-  static const String tableSQL =
-      'CREATE TABLE $_tablename ($_name TEXT PRIMARY KEY, $_currentBalance REAL, $_expectedBalance REAL) ';
+  static const String tableSQL = '''CREATE TABLE $_tablename (
+          $_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          $_name TEXT NOT NULL, $_currentBalance REAL NOT NULL,
+          $_expectedBalance REAL NOT NULL) ''';
   static const String _tablename = 'accountTable';
 
+  static const String _id = 'id';
   static const String _name = 'name';
   static const String _currentBalance = 'current_balance';
   static const String _expectedBalance = 'expected_balance';
@@ -15,12 +18,18 @@ class AccountDao {
   save(AccountWidget accountWidget) async {
     final Database database = await getDataBase();
 
-    var itemExists = await find(accountWidget.name);
+    if (accountWidget.id == null) {
+      return await database.insert(
+          _tablename, toMap(accountWidget).remove(_id));
+    }
+
+    var itemExists = await find(accountWidget.id!);
     if (itemExists.isEmpty) {
-      return await database.insert(_tablename, toMap(accountWidget));
+      return await database.insert(
+          _tablename, toMap(accountWidget).remove(_id));
     } else {
       return await database.update(_tablename, toMap(accountWidget),
-          where: '$_name = ?', whereArgs: [accountWidget.name]);
+          where: '$_id = ?', whereArgs: [accountWidget.id]);
     }
   }
 
@@ -37,10 +46,10 @@ class AccountDao {
     return toMenuItem(result);
   }
 
-  Future<List<AccountWidget>> find(String name) async {
+  Future<List<AccountWidget>> find(int id) async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result = await database
-        .query(_tablename, where: '$_name = ?', whereArgs: [name]);
+    final List<Map<String, dynamic>> result =
+        await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
   }
 
@@ -63,6 +72,7 @@ class AccountDao {
 
     for (Map<String, dynamic> accountMap in accountMaps) {
       final AccountWidget accountWidget = AccountWidget(
+        id: accountMap[_id],
         name: accountMap[_name],
         currentBalance: accountMap[_currentBalance],
         expectedBalance: accountMap[_expectedBalance],
@@ -75,6 +85,7 @@ class AccountDao {
 
   Map<String, dynamic> toMap(AccountWidget accountWidget) {
     final Map<String, dynamic> map = {};
+    map[_id] = accountWidget.id;
     map[_name] = accountWidget.name;
     map[_currentBalance] = accountWidget.currentBalance;
     map[_expectedBalance] = accountWidget.expectedBalance;
