@@ -20,14 +20,12 @@ class AccountDao {
     final Database database = await getDataBase();
 
     if (accountWidget.id == null) {
-      return await database.insert(
-          _tableName, toMap(accountWidget).remove(_id));
+      return await database.insert(_tableName, toMap(accountWidget));
     }
 
     var itemExists = await find(accountWidget.id!);
     if (itemExists.isEmpty) {
-      return await database.insert(
-          _tableName, toMap(accountWidget).remove(_id));
+      return await database.insert(_tableName, toMap(accountWidget));
     } else {
       return await database.update(_tableName, toMap(accountWidget),
           where: '$_id = ?', whereArgs: [accountWidget.id]);
@@ -39,6 +37,15 @@ class AccountDao {
     await txn.rawUpdate(
         'UPDATE ${AccountDao._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
   }
+
+  // Future<double> currentBalance() async {
+  //   final Database database = await getDataBase();
+  //   final List<Map<String, dynamic>> result = await database.rawQuery(
+  //       'SELECT sum($_currentBalance) as $_currentBalance FROM $_tableName');
+  //   double sum = result.single[_currentBalance];
+  //   // double sum = 0;
+  //   return sum;
+  // }
 
   Future<List<AccountWidget>> findAll() async {
     final Database database = await getDataBase();
