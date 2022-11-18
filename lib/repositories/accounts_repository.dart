@@ -17,28 +17,27 @@ class AccountsRepository extends ChangeNotifier {
   static const String _expectedBalance = 'expected_balance';
 
   List<Account> allAccounts = [];
+  double generalCurrentBalance = 0;
+  double generalExpectedBalance = 0;
 
   void _refreshCache() async {
     List<Account> accounts = await findAll();
     allAccounts = accounts;
+
+    for (Account account in allAccounts) {
+      generalCurrentBalance += account.currentBalance;
+      generalExpectedBalance += account.expectedBalance;
+    }
   }
 
   save(Account account) async {
     final Database database = await getDataBase();
 
-    var itemExists = [];
-    if (account.id != null) {
-      itemExists = await find(account.id!);
-    }
+    await database.insert(_tableName, toMap(account));
+    allAccounts.add(account);
+    generalCurrentBalance += account.currentBalance;
+    generalExpectedBalance += account.expectedBalance;
 
-    if (itemExists.isEmpty) {
-      await database.insert(_tableName, toMap(account));
-    } else {
-      await database.update(_tableName, toMap(account),
-          where: '$_id = ?', whereArgs: [account.id]);
-    }
-
-    _refreshCache();
     notifyListeners();
   }
 
@@ -47,15 +46,6 @@ class AccountsRepository extends ChangeNotifier {
     await txn.rawUpdate(
         'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
   }
-
-  // Future<double> currentBalance() async {
-  //   final Database database = await getDataBase();
-  //   final List<Map<String, dynamic>> result = await database.rawQuery(
-  //       'SELECT sum($_currentBalance) as $_currentBalance FROM $_tableName');
-  //   double sum = result.single[_currentBalance];
-  //   // double sum = 0;
-  //   return sum;
-  // }
 
   Future<List<Account>> findAll() async {
     final Database database = await getDataBase();
