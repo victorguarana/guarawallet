@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/transaction_dao.dart';
+import 'package:guarawallet/models/account.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   const TransactionFormScreen({super.key});
@@ -25,10 +26,14 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   }
 
   void _loadAccounts() async {
-    List<DropdownMenuItem> menuItemList = await AccountDao().findAllNames();
-    for (DropdownMenuItem menuItem in menuItemList) {
+    List<Account> accounts = await AccountsRepository().findAll();
+    for (Account account in accounts) {
+      final DropdownMenuItem accountItem = DropdownMenuItem(
+        value: account.name,
+        child: Center(child: Text(account.name)),
+      );
       setState(() {
-        _accountsList.add(menuItem);
+        _accountsList.add(accountItem);
       });
     }
   }

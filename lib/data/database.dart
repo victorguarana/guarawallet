@@ -1,5 +1,5 @@
-import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/transaction_dao.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -9,7 +9,7 @@ Future<Database> getDataBase() async {
     path,
     onCreate: (db, version) {
       db.execute(TransactionDao.tableSQL);
-      db.execute(AccountDao.tableSQL);
+      db.execute(AccountsRepository.tableSQL);
     },
     version: 1,
   );

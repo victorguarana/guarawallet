@@ -1,6 +1,6 @@
 import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/database.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class TransactionDao {
@@ -20,7 +20,7 @@ class TransactionDao {
     if (transactionWidget.id == null) {
       return await database.transaction((txn) async {
         await txn.insert(_tablename, toMap(transactionWidget));
-        await AccountDao().debitAccount(
+        await AccountsRepository().debitAccount(
             txn, transactionWidget.value, transactionWidget.account);
       });
     }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/data/database.dart';
+import 'package:guarawallet/models/account.dart';
 import 'package:sqflite/sqlite_api.dart';
 
-class AccountDao {
+class AccountsRepository extends ChangeNotifier {
   static const String tableSQL = '''CREATE TABLE $_tableName (
           $_id INTEGER PRIMARY KEY AUTOINCREMENT,
           $_name TEXT NOT NULL,
@@ -16,26 +16,36 @@ class AccountDao {
   static const String _currentBalance = 'current_balance';
   static const String _expectedBalance = 'expected_balance';
 
-  save(AccountWidget accountWidget) async {
+  List<Account> allAccounts = [];
+
+  void _refreshCache() async {
+    List<Account> accounts = await findAll();
+    allAccounts = accounts;
+  }
+
+  save(Account account) async {
     final Database database = await getDataBase();
 
-    if (accountWidget.id == null) {
-      return await database.insert(_tableName, toMap(accountWidget));
+    var itemExists = [];
+    if (account.id != null) {
+      itemExists = await find(account.id!);
     }
 
-    var itemExists = await find(accountWidget.id!);
     if (itemExists.isEmpty) {
-      return await database.insert(_tableName, toMap(accountWidget));
+      await database.insert(_tableName, toMap(account));
     } else {
-      return await database.update(_tableName, toMap(accountWidget),
-          where: '$_id = ?', whereArgs: [accountWidget.id]);
+      await database.update(_tableName, toMap(account),
+          where: '$_id = ?', whereArgs: [account.id]);
     }
+
+    _refreshCache();
+    notifyListeners();
   }
 
   // TODO: Move this logic to other class?
   debitAccount(Transaction txn, double value, String accountName) async {
     await txn.rawUpdate(
-        'UPDATE ${AccountDao._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
+        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
   }
 
   // Future<double> currentBalance() async {
@@ -47,61 +57,41 @@ class AccountDao {
   //   return sum;
   // }
 
-  Future<List<AccountWidget>> findAll() async {
+  Future<List<Account>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tableName);
     return toList(result);
   }
 
-  Future<List<DropdownMenuItem>> findAllNames() async {
-    final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result =
-        await database.query(_tableName, columns: [_id, _name]);
-    return toMenuItem(result);
-  }
-
-  Future<List<AccountWidget>> find(int id) async {
+  Future<List<Account>> find(int id) async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result =
         await database.query(_tableName, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
   }
 
-// TODO: This method should be here?
-  List<DropdownMenuItem> toMenuItem(List<Map<String, dynamic>> accountMaps) {
-    List<DropdownMenuItem> menuItems = [];
-    for (Map<String, dynamic> accountMap in accountMaps) {
-      final DropdownMenuItem accountItem = DropdownMenuItem(
-        value: accountMap[_name],
-        child: Center(child: Text(accountMap[_name])),
-      );
-      menuItems.add(accountItem);
-    }
-    return menuItems;
-  }
-
-  List<AccountWidget> toList(List<Map<String, dynamic>> accountMaps) {
-    final List<AccountWidget> accountWidgets = [];
+  List<Account> toList(List<Map<String, dynamic>> accountMaps) {
+    final List<Account> accounts = [];
 
     for (Map<String, dynamic> accountMap in accountMaps) {
-      final AccountWidget accountWidget = AccountWidget(
+      final Account account = Account(
         id: accountMap[_id],
         name: accountMap[_name],
         currentBalance: accountMap[_currentBalance],
         expectedBalance: accountMap[_expectedBalance],
       );
-      accountWidgets.add(accountWidget);
+      accounts.add(account);
     }
 
-    return accountWidgets;
+    return accounts;
   }
 
-  Map<String, dynamic> toMap(AccountWidget accountWidget) {
+  Map<String, dynamic> toMap(Account account) {
     final Map<String, dynamic> map = {};
-    map[_id] = accountWidget.id;
-    map[_name] = accountWidget.name;
-    map[_currentBalance] = accountWidget.currentBalance;
-    map[_expectedBalance] = accountWidget.expectedBalance;
+    map[_id] = account.id;
+    map[_name] = account.name;
+    map[_currentBalance] = account.currentBalance;
+    map[_expectedBalance] = account.expectedBalance;
     return map;
   }
 

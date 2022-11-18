@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/real_text.dart';
+import 'package:guarawallet/models/account.dart';
 
 class AccountWidget extends StatelessWidget {
-  final int? id;
-  final String name;
-  final double currentBalance;
-  final double expectedBalance;
+  final Account account;
 
-  const AccountWidget(
-      {super.key,
-      this.id,
-      required this.name,
-      required this.currentBalance,
-      required this.expectedBalance});
+  const AccountWidget({super.key, required this.account});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +17,16 @@ class AccountWidget extends StatelessWidget {
           children: [
             Column(
               children: [
-                Text(name),
+                Text(account.name),
                 Text('Saldo esp.:',
                     style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
             Column(
               children: [
-                RealText(value: currentBalance),
+                RealText(value: account.currentBalance),
                 RealText(
-                  value: expectedBalance,
+                  value: account.expectedBalance,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
