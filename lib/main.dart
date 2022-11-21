@@ -9,7 +9,7 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AccountsRepository()),
     ChangeNotifierProvider(create: (context) => BankTransactionRepository()),
-  ], child: MyApp()));
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

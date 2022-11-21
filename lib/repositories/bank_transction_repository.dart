@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
+import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -16,14 +17,15 @@ class BankTransactionRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
-  save(BankTransaction bankTransaction) async {
+  save(BankTransaction bankTransaction, Account account,
+      AccountsRepository accountsRepository) async {
     final Database database = await getDataBase();
 
     // TODO: Move this logic to other class?
     await database.transaction((txn) async {
       await txn.insert(_tablename, toMap(bankTransaction));
-      await AccountsRepository()
-          .debitAccount(txn, bankTransaction.value, bankTransaction.account);
+      await accountsRepository.debitAccount(
+          txn, bankTransaction.value, account);
     });
 
     allTransactions.add(bankTransaction);

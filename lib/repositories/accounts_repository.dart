@@ -43,9 +43,11 @@ class AccountsRepository extends ChangeNotifier {
   }
 
   // TODO: Move this logic to other class?
-  debitAccount(Transaction txn, double value, String accountName) async {
+  debitAccount(Transaction txn, double value, Account account) async {
     await txn.rawUpdate(
-        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE name = "$accountName"');
+        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE id = "${account.id}"');
+
+    loadAll();
   }
 
   Future<List<Account>> findAll() async {

@@ -14,8 +14,9 @@ class TransactionFormScreen extends StatefulWidget {
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
   late BankTransactionRepository bankTransactionsRepository;
+  late AccountsRepository accountsRepository;
 
-  String? _selectedAccount;
+  Account? _selectedAccount;
 
   final List<DropdownMenuItem> _accountsList = [];
 
@@ -32,7 +33,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     List<Account> accounts = await AccountsRepository().findAll();
     for (Account account in accounts) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
-        value: account.name,
+        value: account,
         child: Center(child: Text(account.name)),
       );
       setState(() {
@@ -53,6 +54,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   @override
   Widget build(BuildContext context) {
     bankTransactionsRepository = context.watch<BankTransactionRepository>();
+    accountsRepository = context.watch<AccountsRepository>();
 
     return Form(
       key: _formKey,
@@ -125,11 +127,14 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    bankTransactionsRepository.save(BankTransaction(
-                      name: nameController.text,
-                      value: double.parse(valueController.text),
-                      account: _selectedAccount!,
-                    ));
+                    bankTransactionsRepository.save(
+                        BankTransaction(
+                          name: nameController.text,
+                          value: double.parse(valueController.text),
+                          account: _selectedAccount!.name,
+                        ),
+                        _selectedAccount!,
+                        accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Criando uma nova Transação'),
