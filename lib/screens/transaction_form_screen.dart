@@ -132,6 +132,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                           name: nameController.text,
                           value: double.parse(valueController.text),
                           account: _selectedAccount!.name,
+                          createdWhen: DateTime.now(),
                         ),
                         _selectedAccount!,
                         accountsRepository);
