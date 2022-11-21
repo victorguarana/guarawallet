@@ -27,23 +27,7 @@ class AccountsSection extends StatelessWidget {
                         : Consumer<AccountsRepository>(
                             builder: (context, accounts, child) {
                               if (accounts.allAccounts.isEmpty) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: const [
-                                      Icon(
-                                        Icons.no_accounts,
-                                        size: 68,
-                                      ),
-                                      Text(
-                                        'Não existem contas cadastradas.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 18),
-                                      )
-                                    ],
-                                  ),
-                                );
+                                return _NoAccounts();
                               } else {
                                 return ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
@@ -61,6 +45,30 @@ class AccountsSection extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NoAccounts extends StatelessWidget {
+  const _NoAccounts({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: const [
+          Icon(
+            Icons.no_accounts,
+            size: 68,
+          ),
+          Text(
+            'Não existem contas cadastradas.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18),
+          )
+        ],
       ),
     );
   }
