@@ -62,14 +62,14 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           SpeedDialChild(
-            label: 'Limpar transações (Sem auto refresh)',
+            label: 'Limpar transações (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {
               TransactionDao().deleteAll();
             },
           ),
           SpeedDialChild(
-            label: 'Limpar Contas (Sem auto refresh)',
+            label: 'Limpar Contas (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {
               AccountsRepository().deleteAll();

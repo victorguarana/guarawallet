@@ -53,6 +53,18 @@ class AccountsRepository extends ChangeNotifier {
     return toList(result);
   }
 
+  Future<void> loadAll() async {
+    print('loading cache accounts');
+    allAccounts = await findAll();
+    generalCurrentBalance = 0;
+    generalExpectedBalance = 0;
+    for (Account account in allAccounts) {
+      generalCurrentBalance += account.currentBalance;
+      generalExpectedBalance += account.expectedBalance;
+    }
+    notifyListeners();
+  }
+
   Future<List<Account>> find(int id) async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result =
