@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/basic_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/repositories/bank_transction_repository.dart';
+import 'package:guarawallet/repositories/bank_transctions_repository.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsSection extends StatelessWidget {
@@ -22,13 +22,13 @@ class TransactionsSection extends StatelessWidget {
             const Divider(color: Colors.grey, thickness: 1),
             Expanded(
               child: FutureBuilder(
-                future: Provider.of<BankTransactionRepository>(context,
+                future: Provider.of<BankTransactionsRepository>(context,
                         listen: false)
                     .loadAll(),
                 builder: (context, snapshot) =>
                     snapshot.connectionState == ConnectionState.waiting
                         ? const Center(child: CircularProgressIndicator())
-                        : Consumer<BankTransactionRepository>(
+                        : Consumer<BankTransactionsRepository>(
                             builder: (context, accounts, child) {
                               if (accounts.allTransactions.isEmpty) {
                                 return const _NoTransactions();

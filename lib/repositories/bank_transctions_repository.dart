@@ -5,7 +5,7 @@ import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
-class BankTransactionRepository extends ChangeNotifier {
+class BankTransactionsRepository extends ChangeNotifier {
   static const String tableSQL =
       'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL) ';
   static const String _tablename = 'transactionTable';

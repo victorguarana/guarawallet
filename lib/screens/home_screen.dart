@@ -5,7 +5,7 @@ import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/transactions_section.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transction_repository.dart';
+import 'package:guarawallet/repositories/bank_transctions_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
 
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
             label: 'Limpar transações (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {
-              BankTransactionRepository().deleteAll();
+              BankTransactionsRepository().deleteAll();
             },
           ),
           SpeedDialChild(

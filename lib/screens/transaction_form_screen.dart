@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transction_repository.dart';
+import 'package:guarawallet/repositories/bank_transctions_repository.dart';
 import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
@@ -13,7 +13,7 @@ class TransactionFormScreen extends StatefulWidget {
 }
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
-  late BankTransactionRepository bankTransactionsRepository;
+  late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
   Account? _selectedAccount;
@@ -53,7 +53,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bankTransactionsRepository = context.watch<BankTransactionRepository>();
+    bankTransactionsRepository = context.watch<BankTransactionsRepository>();
     accountsRepository = context.watch<AccountsRepository>();
 
     return Form(
