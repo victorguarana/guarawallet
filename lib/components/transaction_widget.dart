@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/real_text.dart';
+import 'package:guarawallet/models/bank_transaction.dart';
 
 // TODO: Add Account and others fields to this widget
 class TransactionWidget extends StatelessWidget {
-  final int? id;
-  final String name;
-  final double value;
-  final String account;
-  const TransactionWidget(
-      {super.key,
-      this.id,
-      required this.name,
-      required this.value,
-      required this.account});
+  final BankTransaction transaction;
+  const TransactionWidget({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +18,13 @@ class TransactionWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(name),
-                  RealText(value: value),
+                  Text(transaction.name),
+                  RealText(value: transaction.value),
                 ],
               ),
               Row(children: [
                 Text(
-                  account,
+                  transaction.account,
                   style: Theme.of(context).textTheme.bodySmall,
                 )
               ])

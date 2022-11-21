@@ -34,6 +34,7 @@ class AccountsRepository extends ChangeNotifier {
     final Database database = await getDataBase();
 
     await database.insert(_tableName, toMap(account));
+
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
     generalExpectedBalance += account.expectedBalance;
@@ -54,14 +55,15 @@ class AccountsRepository extends ChangeNotifier {
   }
 
   Future<void> loadAll() async {
-    print('loading cache accounts');
     allAccounts = await findAll();
+
     generalCurrentBalance = 0;
     generalExpectedBalance = 0;
     for (Account account in allAccounts) {
       generalCurrentBalance += account.currentBalance;
       generalExpectedBalance += account.expectedBalance;
     }
+
     notifyListeners();
   }
 

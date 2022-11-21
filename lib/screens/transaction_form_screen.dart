@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/data/transaction_dao.dart';
 import 'package:guarawallet/models/account.dart';
+import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_transction_repository.dart';
+import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   const TransactionFormScreen({super.key});
@@ -12,6 +13,8 @@ class TransactionFormScreen extends StatefulWidget {
 }
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
+  late BankTransactionRepository bankTransactionsRepository;
+
   String? _selectedAccount;
 
   final List<DropdownMenuItem> _accountsList = [];
@@ -49,6 +52,8 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bankTransactionsRepository = context.watch<BankTransactionRepository>();
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -120,7 +125,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    TransactionDao().save(TransactionWidget(
+                    bankTransactionsRepository.save(BankTransaction(
                       name: nameController.text,
                       value: double.parse(valueController.text),
                       account: _selectedAccount!,

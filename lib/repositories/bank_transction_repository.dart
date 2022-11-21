@@ -1,9 +1,10 @@
-import 'package:guarawallet/components/transaction_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
+import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
-class TransactionDao {
+class BankTransactionRepository extends ChangeNotifier {
   static const String tableSQL =
       'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL) ';
   static const String _tablename = 'transactionTable';
@@ -13,62 +14,63 @@ class TransactionDao {
   static const String _value = 'value';
   static const String _account = 'account';
 
-  save(TransactionWidget transactionWidget) async {
+  List<BankTransaction> allTransactions = [];
+
+  save(BankTransaction bankTransaction) async {
     final Database database = await getDataBase();
 
     // TODO: Move this logic to other class?
-    if (transactionWidget.id == null) {
-      return await database.transaction((txn) async {
-        await txn.insert(_tablename, toMap(transactionWidget));
-        await AccountsRepository().debitAccount(
-            txn, transactionWidget.value, transactionWidget.account);
-      });
-    }
+    await database.transaction((txn) async {
+      await txn.insert(_tablename, toMap(bankTransaction));
+      await AccountsRepository()
+          .debitAccount(txn, bankTransaction.value, bankTransaction.account);
+    });
 
-    var itemExists = await find(transactionWidget.id!);
-    if (itemExists.isEmpty) {
-      return await database.insert(_tablename, toMap(transactionWidget));
-    } else {
-      return await database.update(_tablename, toMap(transactionWidget),
-          where: '$_name = ?', whereArgs: [transactionWidget.name]);
-    }
+    allTransactions.add(bankTransaction);
+    notifyListeners();
   }
 
-  Future<List<TransactionWidget>> findAll() async {
+  Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tablename);
     return toList(result);
   }
 
-  Future<List<TransactionWidget>> find(int id) async {
+  Future<void> loadAll() async {
+    allTransactions = await findAll();
+
+    notifyListeners();
+  }
+
+  Future<List<BankTransaction>> find(int id) async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result =
         await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
   }
 
-  List<TransactionWidget> toList(List<Map<String, dynamic>> transactionMaps) {
-    final List<TransactionWidget> transactionWidgets = [];
+  List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
+    final List<BankTransaction> bankTransactions = [];
 
     for (Map<String, dynamic> transactionMap in transactionMaps) {
-      final TransactionWidget transactionWidget = TransactionWidget(
+      final BankTransaction bankTransaction = BankTransaction(
         id: transactionMap[_id],
         name: transactionMap[_name],
         value: transactionMap[_value],
         account: transactionMap[_account],
       );
-      transactionWidgets.add(transactionWidget);
+      bankTransactions.add(bankTransaction);
     }
 
-    return transactionWidgets;
+    return bankTransactions;
   }
 
-  Map<String, dynamic> toMap(TransactionWidget transactionWidget) {
+  Map<String, dynamic> toMap(BankTransaction bankTransaction) {
     final Map<String, dynamic> map = {};
-    map[_id] = transactionWidget.id;
-    map[_name] = transactionWidget.name;
-    map[_value] = transactionWidget.value;
-    map[_account] = transactionWidget.account;
+    map[_id] = bankTransaction.id;
+    map[_name] = bankTransaction.name;
+    map[_value] = bankTransaction.value;
+    map[_account] = bankTransaction.account;
     return map;
   }
 
