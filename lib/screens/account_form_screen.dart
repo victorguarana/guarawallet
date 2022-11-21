@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guarawallet/components/account_widget.dart';
-import 'package:guarawallet/data/account_dao.dart';
+import 'package:guarawallet/models/account.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:provider/provider.dart';
 
 class AccountFormScreen extends StatefulWidget {
   const AccountFormScreen({super.key});
@@ -10,6 +11,8 @@ class AccountFormScreen extends StatefulWidget {
 }
 
 class AccountFormScreenState extends State<AccountFormScreen> {
+  late AccountsRepository accountsRepository;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController currentBalanceController = TextEditingController();
 
@@ -24,6 +27,8 @@ class AccountFormScreenState extends State<AccountFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    accountsRepository = context.watch<AccountsRepository>();
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -69,7 +74,7 @@ class AccountFormScreenState extends State<AccountFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    AccountDao().save(AccountWidget(
+                    accountsRepository.save(Account(
                       name: nameController.text,
                       currentBalance:
                           double.parse(currentBalanceController.text),

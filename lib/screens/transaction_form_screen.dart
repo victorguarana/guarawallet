@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/data/account_dao.dart';
-import 'package:guarawallet/data/transaction_dao.dart';
+import 'package:guarawallet/models/account.dart';
+import 'package:guarawallet/models/bank_transaction.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_transction_repository.dart';
+import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   const TransactionFormScreen({super.key});
@@ -11,7 +13,10 @@ class TransactionFormScreen extends StatefulWidget {
 }
 
 class TransactionFormScreenState extends State<TransactionFormScreen> {
-  String? _selectedAccount;
+  late BankTransactionRepository bankTransactionsRepository;
+  late AccountsRepository accountsRepository;
+
+  Account? _selectedAccount;
 
   final List<DropdownMenuItem> _accountsList = [];
 
@@ -25,10 +30,14 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   }
 
   void _loadAccounts() async {
-    List<DropdownMenuItem> menuItemList = await AccountDao().findAllNames();
-    for (DropdownMenuItem menuItem in menuItemList) {
+    List<Account> accounts = await AccountsRepository().findAll();
+    for (Account account in accounts) {
+      final DropdownMenuItem accountItem = DropdownMenuItem(
+        value: account,
+        child: Center(child: Text(account.name)),
+      );
       setState(() {
-        _accountsList.add(menuItem);
+        _accountsList.add(accountItem);
       });
     }
   }
@@ -44,6 +53,9 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bankTransactionsRepository = context.watch<BankTransactionRepository>();
+    accountsRepository = context.watch<AccountsRepository>();
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -115,11 +127,14 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    TransactionDao().save(TransactionWidget(
-                      name: nameController.text,
-                      value: double.parse(valueController.text),
-                      account: _selectedAccount!,
-                    ));
+                    bankTransactionsRepository.save(
+                        BankTransaction(
+                          name: nameController.text,
+                          value: double.parse(valueController.text),
+                          account: _selectedAccount!.name,
+                        ),
+                        _selectedAccount!,
+                        accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Criando uma nova Transação'),

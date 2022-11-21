@@ -4,6 +4,8 @@ import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/transactions_section.dart';
+import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_transction_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
 
@@ -25,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               children: const [
                 AccountsSection(),
                 TransactionsSection(),
-                GoalsSection(),
+                // GoalsSection(),
               ],
             ),
           )
@@ -42,7 +44,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (contextNew) => const TransactionFormScreen(),
+                  builder: (context) => const TransactionFormScreen(),
                 ),
               );
             },
@@ -54,9 +56,23 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (contextNew) => const AccountFormScreen(),
+                  builder: (context) => const AccountFormScreen(),
                 ),
               );
+            },
+          ),
+          SpeedDialChild(
+            label: 'Limpar transações (Sem refresh)',
+            child: const Icon(Icons.clear_all),
+            onTap: () {
+              BankTransactionRepository().deleteAll();
+            },
+          ),
+          SpeedDialChild(
+            label: 'Limpar Contas (Sem refresh)',
+            child: const Icon(Icons.clear_all),
+            onTap: () {
+              AccountsRepository().deleteAll();
             },
           ),
         ],
