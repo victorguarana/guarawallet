@@ -20,16 +20,6 @@ class AccountsRepository extends ChangeNotifier {
   double generalCurrentBalance = 0;
   double generalExpectedBalance = 0;
 
-  void _refreshCache() async {
-    List<Account> accounts = await findAll();
-    allAccounts = accounts;
-
-    for (Account account in allAccounts) {
-      generalCurrentBalance += account.currentBalance;
-      generalExpectedBalance += account.expectedBalance;
-    }
-  }
-
   save(Account account) async {
     final Database database = await getDataBase();
 
@@ -45,7 +35,7 @@ class AccountsRepository extends ChangeNotifier {
   // TODO: Move this logic to other class?
   debitAccount(Transaction txn, double value, Account account) async {
     await txn.rawUpdate(
-        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance - $value, $_expectedBalance = $_expectedBalance - $value WHERE id = "${account.id}"');
+        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE id = "${account.id}"');
 
     loadAll();
   }
