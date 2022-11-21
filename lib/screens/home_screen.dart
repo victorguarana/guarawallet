@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               children: const [
                 AccountsSection(),
                 TransactionsSection(),
-                GoalsSection(),
+                // GoalsSection(),
               ],
             ),
           )
