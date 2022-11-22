@@ -11,7 +11,7 @@ class AccountsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       cardTitle: 'Contas',
-      cardHeight: 300,
+      cardHeight: 230,
       cardContent: FutureBuilder(
         future:
             Provider.of<AccountsRepository>(context, listen: false).loadAll(),
@@ -28,10 +28,14 @@ class AccountsSection extends StatelessWidget {
                       padding: const EdgeInsets.all(0),
                       itemCount: accounts.allAccounts.length,
                       itemBuilder: (context, index) {
-                        return Column(children: [
-                          AccountWidget(account: accounts.allAccounts[index]),
-                          const ListCardDivider(),
-                        ]);
+                        if (index < 5) {
+                          return Column(children: [
+                            AccountWidget(account: accounts.allAccounts[index]),
+                            const ListCardDivider(),
+                          ]);
+                        } else {
+                          return Container();
+                        }
                       },
                     );
                   }

@@ -11,33 +11,37 @@ class TransactionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       cardTitle: 'Transações',
-      cardHeight: 230,
+      cardHeight: 305,
       cardContent: FutureBuilder(
         future: Provider.of<BankTransactionsRepository>(context, listen: false)
             .loadAll(),
-        builder: (context, snapshot) =>
-            snapshot.connectionState == ConnectionState.waiting
-                ? const Center(child: CircularProgressIndicator())
-                : Consumer<BankTransactionsRepository>(
-                    builder: (context, accounts, child) {
-                      if (accounts.allTransactions.isEmpty) {
-                        return const _NoTransactions();
-                      } else {
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(0),
-                          itemCount: accounts.allTransactions.length,
-                          itemBuilder: (context, index) {
-                            return Column(children: [
-                              TransactionWidget(
-                                  transaction: accounts.allTransactions[index]),
-                              const ListCardDivider()
-                            ]);
-                          },
-                        );
-                      }
-                    },
-                  ),
+        builder: (context, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? const Center(child: CircularProgressIndicator())
+            : Consumer<BankTransactionsRepository>(
+                builder: (context, accounts, child) {
+                  if (accounts.allTransactions.isEmpty) {
+                    return const _NoTransactions();
+                  } else {
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemCount: accounts.allTransactions.length,
+                      itemBuilder: (context, index) {
+                        if (index < 5) {
+                          return Column(children: [
+                            TransactionWidget(
+                                transaction: accounts.allTransactions[index]),
+                            const ListCardDivider()
+                          ]);
+                        } else {
+                          return Container();
+                        }
+                      },
+                    );
+                  }
+                },
+              ),
       ),
     );
   }
