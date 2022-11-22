@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guarawallet/components/basic_card.dart';
+import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/real_text.dart';
 
 class GoalsSection extends StatelessWidget {
@@ -7,22 +7,18 @@ class GoalsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BasicCard(
-        cardContent: Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Text('Metas', style: Theme.of(context).textTheme.titleMedium),
-          const Divider(color: Colors.grey, thickness: 1),
-          const _Goal(
-              name: 'Viagem', balance: 100, missing: 200, expected: 300),
-          const Divider(color: Colors.grey, thickness: 1),
-          const _Goal(
+    return ListCard(
+      cardTitle: 'Metas',
+      cardContent: Column(
+        children: const [
+          _Goal(name: 'Viagem', balance: 100, missing: 200, expected: 300),
+          ListCardDivider(),
+          _Goal(
               name: 'Casamento', balance: 3500, missing: 1500, expected: 5000),
-          const Divider(color: Colors.grey, thickness: 1),
+          ListCardDivider(),
         ],
       ),
-    ));
+    );
   }
 }
 

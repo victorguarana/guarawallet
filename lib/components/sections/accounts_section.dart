@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/account_widget.dart';
-import 'package:guarawallet/components/basic_card.dart';
+import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -9,42 +9,38 @@ class AccountsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BasicCard(
-      cardHeight: 300,
-      cardContent: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Text('Contas', style: Theme.of(context).textTheme.titleMedium),
-            const Divider(color: Colors.grey, thickness: 1),
-            Expanded(
-              child: FutureBuilder(
-                future: Provider.of<AccountsRepository>(context, listen: false)
-                    .loadAll(),
-                builder: (context, snapshot) =>
-                    snapshot.connectionState == ConnectionState.waiting
-                        ? const Center(child: CircularProgressIndicator())
-                        : Consumer<AccountsRepository>(
-                            builder: (context, accounts, child) {
-                              if (accounts.allAccounts.isEmpty) {
-                                return _NoAccounts();
-                              } else {
-                                return ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(0),
-                                  itemCount: accounts.allAccounts.length,
-                                  itemBuilder: (context, index) {
-                                    return AccountWidget(
-                                        account: accounts.allAccounts[index]);
-                                  },
-                                );
-                              }
-                            },
-                          ),
+    return ListCard(
+      cardTitle: 'Contas',
+      cardHeight: 230,
+      cardContent: FutureBuilder(
+        future:
+            Provider.of<AccountsRepository>(context, listen: false).loadAll(),
+        builder: (context, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? const Center(child: CircularProgressIndicator())
+            : Consumer<AccountsRepository>(
+                builder: (context, accounts, child) {
+                  if (accounts.allAccounts.isEmpty) {
+                    return const _NoAccounts();
+                  } else {
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemCount: accounts.allAccounts.length,
+                      itemBuilder: (context, index) {
+                        if (index < 5) {
+                          return Column(children: [
+                            AccountWidget(account: accounts.allAccounts[index]),
+                            const ListCardDivider(),
+                          ]);
+                        } else {
+                          return Container();
+                        }
+                      },
+                    );
+                  }
+                },
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
