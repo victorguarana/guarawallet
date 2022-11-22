@@ -12,10 +12,10 @@ class GoalsSection extends StatelessWidget {
       cardContent: Column(
         children: const [
           _Goal(name: 'Viagem', balance: 100, missing: 200, expected: 300),
-          Divider(color: Colors.grey, thickness: 1),
+          ListCardDivider(),
           _Goal(
               name: 'Casamento', balance: 3500, missing: 1500, expected: 5000),
-          Divider(color: Colors.grey, thickness: 1),
+          ListCardDivider(),
         ],
       ),
     );

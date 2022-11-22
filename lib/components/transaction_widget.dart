@@ -9,30 +9,25 @@ class TransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Column(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(transaction.name),
-                  RealText(value: transaction.value),
-                ],
-              ),
-              Row(children: [
-                Text(
-                  transaction.account,
-                  style: Theme.of(context).textTheme.bodySmall,
-                )
-              ])
+              Text(transaction.name),
+              RealText(value: transaction.value),
             ],
           ),
-        ),
-        const Divider(color: Colors.grey, thickness: 1),
-      ],
+          Row(children: [
+            Text(
+              transaction.account,
+              style: Theme.of(context).textTheme.bodySmall,
+            )
+          ])
+        ],
+      ),
     );
   }
 }

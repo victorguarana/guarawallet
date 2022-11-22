@@ -28,8 +28,11 @@ class TransactionsSection extends StatelessWidget {
                           padding: const EdgeInsets.all(0),
                           itemCount: accounts.allTransactions.length,
                           itemBuilder: (context, index) {
-                            return TransactionWidget(
-                                transaction: accounts.allTransactions[index]);
+                            return Column(children: [
+                              TransactionWidget(
+                                  transaction: accounts.allTransactions[index]),
+                              const ListCardDivider()
+                            ]);
                           },
                         );
                       }

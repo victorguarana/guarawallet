@@ -30,12 +30,21 @@ class ListCard extends StatelessWidget {
                 cardTitle,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const Divider(color: Colors.grey, thickness: 1),
+              const ListCardDivider(),
               Expanded(child: cardContent)
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class ListCardDivider extends StatelessWidget {
+  const ListCardDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(color: Colors.grey, thickness: 1);
   }
 }

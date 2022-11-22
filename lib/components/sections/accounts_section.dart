@@ -15,26 +15,28 @@ class AccountsSection extends StatelessWidget {
       cardContent: FutureBuilder(
         future:
             Provider.of<AccountsRepository>(context, listen: false).loadAll(),
-        builder: (context, snapshot) =>
-            snapshot.connectionState == ConnectionState.waiting
-                ? const Center(child: CircularProgressIndicator())
-                : Consumer<AccountsRepository>(
-                    builder: (context, accounts, child) {
-                      if (accounts.allAccounts.isEmpty) {
-                        return const _NoAccounts();
-                      } else {
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(0),
-                          itemCount: accounts.allAccounts.length,
-                          itemBuilder: (context, index) {
-                            return AccountWidget(
-                                account: accounts.allAccounts[index]);
-                          },
-                        );
-                      }
-                    },
-                  ),
+        builder: (context, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? const Center(child: CircularProgressIndicator())
+            : Consumer<AccountsRepository>(
+                builder: (context, accounts, child) {
+                  if (accounts.allAccounts.isEmpty) {
+                    return const _NoAccounts();
+                  } else {
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemCount: accounts.allAccounts.length,
+                      itemBuilder: (context, index) {
+                        return Column(children: [
+                          AccountWidget(account: accounts.allAccounts[index]),
+                          const ListCardDivider(),
+                        ]);
+                      },
+                    );
+                  }
+                },
+              ),
       ),
     );
   }
