@@ -56,7 +56,7 @@ class ListCardDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(color: Colors.grey, thickness: 1);
+    return const Divider(color: Colors.grey, thickness: 0.5);
   }
 }
 
