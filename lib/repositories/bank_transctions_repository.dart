@@ -6,6 +6,7 @@ import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
+// TODO: Rename file and transictions stuff
 class BankTransactionsRepository extends ChangeNotifier {
   static const String tableSQL =
       'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL, $_createdWhen DATE NOT NULL)';
@@ -19,6 +20,7 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
+  // TODO: remove account param
   save(BankTransaction bankTransaction, Account account,
       AccountsRepository accountsRepository) async {
     final Database database = await getDataBase();
@@ -27,7 +29,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     await database.transaction((txn) async {
       await txn.insert(_tablename, toMap(bankTransaction));
       await accountsRepository.debitAccount(
-          txn, bankTransaction.value, account);
+          txn, bankTransaction.value, bankTransaction.account);
     });
 
     allTransactions.add(bankTransaction);
@@ -86,5 +88,18 @@ class BankTransactionsRepository extends ChangeNotifier {
   deleteAll() async {
     final Database database = await getDataBase();
     await database.delete(_tablename);
+  }
+
+  delete(BankTransaction bankTransaction,
+      AccountsRepository accountsRepository) async {
+    final Database database = await getDataBase();
+    await database.transaction((txn) async {
+      await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+      await accountsRepository.debitAccount(
+          txn, (bankTransaction.value * -1), bankTransaction.account);
+    });
+
+    allTransactions.remove(bankTransaction);
+    notifyListeners();
   }
 }

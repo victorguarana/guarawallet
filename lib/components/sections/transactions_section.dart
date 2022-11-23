@@ -31,6 +31,7 @@ class TransactionsSection extends StatelessWidget {
                       padding: const EdgeInsets.all(0),
                       itemCount: accounts.allTransactions.length,
                       itemBuilder: (context, index) {
+                        // TODO: Check if can use param to limit size
                         if (index < 5) {
                           return Column(children: [
                             TransactionWidget(
