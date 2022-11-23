@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
-import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
@@ -20,8 +19,7 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
-  // TODO: remove account param
-  save(BankTransaction bankTransaction, Account account,
+  save(BankTransaction bankTransaction,
       AccountsRepository accountsRepository) async {
     final Database database = await getDataBase();
 

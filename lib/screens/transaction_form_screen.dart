@@ -134,7 +134,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),
-                        _selectedAccount!,
                         accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
