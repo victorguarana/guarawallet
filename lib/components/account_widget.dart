@@ -15,12 +15,14 @@ class AccountWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(account.name),
               Text('Saldo esp.:', style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               RealText(value: account.currentBalance),
               RealText(
