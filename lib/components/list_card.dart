@@ -41,7 +41,10 @@ class ListCard extends StatelessWidget {
                   _ListScreenButton(listScreenRouter),
                 ],
               ),
-              const ListCardDivider(),
+              const Divider(
+                color: Colors.grey,
+                thickness: 1.5,
+              ),
               Expanded(child: cardContent)
             ],
           ),
@@ -56,7 +59,11 @@ class ListCardDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(color: Colors.grey, thickness: 0.5);
+    return const Divider(
+      color: Colors.grey,
+      thickness: 0.5,
+      height: 0,
+    );
   }
 }
 

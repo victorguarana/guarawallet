@@ -58,6 +58,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         );
                       },
                       child: Column(children: [
+                        const ListCardDivider(),
                         TransactionWidget(transaction: banckTransaction),
                         const ListCardDivider()
                       ]),
