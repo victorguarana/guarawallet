@@ -3,6 +3,7 @@ import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -15,10 +16,12 @@ class AccountsListScreen extends StatefulWidget {
 
 class _AccountsListScreenState extends State<AccountsListScreen> {
   late AccountsRepository accountsRepository;
+  late BankTransactionsRepository bankTransactionsRepository;
 
   @override
   Widget build(BuildContext context) {
     accountsRepository = context.watch<AccountsRepository>();
+    bankTransactionsRepository = context.watch<BankTransactionsRepository>();
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +79,8 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                       );
                     },
                     onDismissed: (direction) {
-                      accountsRepository.delete(account);
+                      accountsRepository.delete(
+                          account, bankTransactionsRepository);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

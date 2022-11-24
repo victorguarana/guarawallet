@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/account.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class AccountsRepository extends ChangeNotifier {
@@ -33,7 +34,8 @@ class AccountsRepository extends ChangeNotifier {
   }
 
   // TODO: Move this logic to other class?
-  debitAccount(Transaction txn, double value, String accountName) async {
+  Future<void> debitAccount(
+      Transaction txn, double value, String accountName) async {
     await txn.rawUpdate(
         'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
 
@@ -91,13 +93,17 @@ class AccountsRepository extends ChangeNotifier {
     return map;
   }
 
-  delete(Account account) async {
+  delete(Account account,
+      BankTransactionsRepository bankTransactionsRepository) async {
     final Database database = await getDataBase();
-    await database.delete(_tableName, where: '$_id = ${account.id}');
+
+    // TODO: Move this logic to other class?
+    await database.transaction((txn) async {
+      await txn.delete(_tableName, where: '$_id = ${account.id}');
+      await bankTransactionsRepository.deleteAllAccount(txn, account.name);
+    });
 
     allAccounts.remove(account);
-    // TODO: Delete transactions related with this account
-
     notifyListeners();
   }
 

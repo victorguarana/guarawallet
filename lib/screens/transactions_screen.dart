@@ -15,6 +15,8 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
+  // TODO: Check if exists a better way to get accounts repository outside this class
+  // (Maybe inside other repositories?)
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
@@ -34,7 +36,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             return const _NoTransactions();
           } else {
             return ListView.builder(
-              // physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
               itemCount: transactions.allTransactions.length,
               itemBuilder: (context, index) {
