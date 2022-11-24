@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
-import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
@@ -19,7 +18,7 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
-  save(BankTransaction bankTransaction, Account account,
+  save(BankTransaction bankTransaction,
       AccountsRepository accountsRepository) async {
     final Database database = await getDataBase();
 
@@ -27,7 +26,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     await database.transaction((txn) async {
       await txn.insert(_tablename, toMap(bankTransaction));
       await accountsRepository.debitAccount(
-          txn, bankTransaction.value, account);
+          txn, bankTransaction.value, bankTransaction.account);
     });
 
     allTransactions.add(bankTransaction);
@@ -86,5 +85,18 @@ class BankTransactionsRepository extends ChangeNotifier {
   deleteAll() async {
     final Database database = await getDataBase();
     await database.delete(_tablename);
+  }
+
+  delete(BankTransaction bankTransaction,
+      AccountsRepository accountsRepository) async {
+    final Database database = await getDataBase();
+    await database.transaction((txn) async {
+      await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+      await accountsRepository.debitAccount(
+          txn, (bankTransaction.value * -1), bankTransaction.account);
+    });
+
+    allTransactions.remove(bankTransaction);
+    notifyListeners();
   }
 }

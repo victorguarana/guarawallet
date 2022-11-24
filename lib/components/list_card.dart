@@ -4,11 +4,16 @@ class ListCard extends StatelessWidget {
   final Widget cardContent;
   final String cardTitle;
   final double? cardHeight;
+
+  // Need to pass as a fuction because it needs to create a new MaterialPageRoute every time
+  final MaterialPageRoute<dynamic> Function()? listScreenRouter;
+
   const ListCard(
       {Key? key,
       required this.cardContent,
-      this.cardHeight,
-      required this.cardTitle})
+      required this.cardTitle,
+      this.listScreenRouter,
+      this.cardHeight})
       : super(key: key);
 
   @override
@@ -26,11 +31,20 @@ class ListCard extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              Text(
-                cardTitle,
-                style: Theme.of(context).textTheme.titleMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    cardTitle,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  _ListScreenButton(listScreenRouter),
+                ],
               ),
-              const ListCardDivider(),
+              const Divider(
+                color: Colors.grey,
+                thickness: 1.5,
+              ),
               Expanded(child: cardContent)
             ],
           ),
@@ -45,6 +59,32 @@ class ListCardDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(color: Colors.grey, thickness: 1);
+    return const Divider(
+      color: Colors.grey,
+      thickness: 0.5,
+      height: 0,
+    );
+  }
+}
+
+class _ListScreenButton extends StatelessWidget {
+  final MaterialPageRoute<dynamic> Function()? listRouter;
+
+  const _ListScreenButton(this.listRouter);
+
+  @override
+  Widget build(BuildContext context) {
+    return listRouter != null
+        ? IconButton(
+            onPressed: () => Navigator.push(context, listRouter!()),
+            icon: const Icon(Icons.open_in_new),
+          )
+        : const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.open_in_new,
+              color: Colors.grey,
+            ),
+          );
   }
 }

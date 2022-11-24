@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
@@ -134,7 +134,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),
-                        _selectedAccount!,
                         accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
