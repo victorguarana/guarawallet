@@ -44,7 +44,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         accounts.allTransactions[index];
                     return Dismissible(
                       key: UniqueKey(),
-                      background: Container(color: Colors.red),
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        color: Colors.red,
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 15),
+                          child: Icon(Icons.delete),
+                        ),
+                      ),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
                         bankTransactionsRepository.delete(
