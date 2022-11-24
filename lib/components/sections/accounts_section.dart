@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/screens/accounts_screen.dart';
 import 'package:provider/provider.dart';
 
 class AccountsSection extends StatelessWidget {
@@ -13,6 +14,8 @@ class AccountsSection extends StatelessWidget {
     return ListCard(
       cardTitle: 'Contas',
       cardHeight: 230,
+      listScreenRouter: () =>
+          MaterialPageRoute(builder: (context) => const AccountsListScreen()),
       cardContent: FutureBuilder(
         future:
             Provider.of<AccountsRepository>(context, listen: false).loadAll(),
@@ -50,7 +53,7 @@ class AccountsSection extends StatelessWidget {
 }
 
 class _NoAccounts extends StatelessWidget {
-  const _NoAccounts({super.key});
+  const _NoAccounts();
 
   @override
   Widget build(BuildContext context) {

@@ -87,6 +87,12 @@ class BankTransactionsRepository extends ChangeNotifier {
     await database.delete(_tablename);
   }
 
+  Future<void> deleteAllAccount(Transaction txn, String accountName) async {
+    await txn.delete(_tablename, where: '$_account = \'$accountName\'');
+
+    loadAll();
+  }
+
   delete(BankTransaction bankTransaction,
       AccountsRepository accountsRepository) async {
     final Database database = await getDataBase();
