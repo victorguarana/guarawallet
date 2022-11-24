@@ -28,53 +28,50 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         title: const Text('Transações'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Consumer<BankTransactionsRepository>(
-          builder: (context, transactions, child) {
-            if (transactions.allTransactions.isEmpty) {
-              return const _NoTransactions();
-            } else {
-              return ListView.builder(
-                // physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                itemCount: transactions.allTransactions.length,
-                itemBuilder: (context, index) {
-                  BankTransaction banckTransaction =
-                      transactions.allTransactions[index];
-                  return Dismissible(
-                    key: UniqueKey(),
-                    background: Container(
-                      alignment: Alignment.centerRight,
-                      color: Colors.red,
-                      child: const Padding(
-                        padding: EdgeInsets.only(right: 15),
-                        child: Icon(Icons.delete),
-                      ),
+      body: Consumer<BankTransactionsRepository>(
+        builder: (context, transactions, child) {
+          if (transactions.allTransactions.isEmpty) {
+            return const _NoTransactions();
+          } else {
+            return ListView.builder(
+              // physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+              itemCount: transactions.allTransactions.length,
+              itemBuilder: (context, index) {
+                BankTransaction banckTransaction =
+                    transactions.allTransactions[index];
+                return Dismissible(
+                  key: UniqueKey(),
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    color: Colors.red,
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 15),
+                      child: Icon(Icons.delete),
                     ),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      bankTransactionsRepository.delete(
-                          banckTransaction, accountsRepository);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.grey,
-                          content: Text(
-                              'Transação \'${banckTransaction.name}\' foi deletada!'),
-                        ),
-                      );
-                    },
-                    child: Column(children: [
-                      const ListCardDivider(),
-                      TransactionWidget(transaction: banckTransaction),
-                      const ListCardDivider()
-                    ]),
-                  );
-                },
-              );
-            }
-          },
-        ),
+                  ),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    bankTransactionsRepository.delete(
+                        banckTransaction, accountsRepository);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.grey,
+                        content: Text(
+                            'Transação \'${banckTransaction.name}\' foi deletada!'),
+                      ),
+                    );
+                  },
+                  child: Column(children: [
+                    const ListCardDivider(),
+                    TransactionWidget(transaction: banckTransaction),
+                    const ListCardDivider()
+                  ]),
+                );
+              },
+            );
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
