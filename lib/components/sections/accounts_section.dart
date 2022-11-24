@@ -5,6 +5,7 @@ import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:provider/provider.dart';
 
 class AccountsSection extends StatelessWidget {
+  static const int _listSize = 3;
   const AccountsSection({super.key});
 
   @override
@@ -26,7 +27,9 @@ class AccountsSection extends StatelessWidget {
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(0),
-                      itemCount: accounts.allAccounts.length,
+                      itemCount: accounts.allAccounts.length > _listSize
+                          ? _listSize
+                          : accounts.allAccounts.length,
                       itemBuilder: (context, index) {
                         if (index < 5) {
                           return Column(children: [

@@ -6,6 +6,7 @@ import 'package:guarawallet/screens/transactions_screen.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsSection extends StatelessWidget {
+  static const int _listSize = 5;
   const TransactionsSection({super.key});
 
   @override
@@ -22,25 +23,22 @@ class TransactionsSection extends StatelessWidget {
                 ConnectionState.waiting
             ? const Center(child: CircularProgressIndicator())
             : Consumer<BankTransactionsRepository>(
-                builder: (context, accounts, child) {
-                  if (accounts.allTransactions.isEmpty) {
+                builder: (context, transactions, child) {
+                  if (transactions.allTransactions.isEmpty) {
                     return const _NoTransactions();
                   } else {
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(0),
-                      itemCount: accounts.allTransactions.length,
+                      itemCount: transactions.allTransactions.length > _listSize
+                          ? _listSize
+                          : transactions.allTransactions.length,
                       itemBuilder: (context, index) {
-                        // TODO: Check if can use param to limit size
-                        if (index < 5) {
-                          return Column(children: [
-                            TransactionWidget(
-                                transaction: accounts.allTransactions[index]),
-                            const ListCardDivider()
-                          ]);
-                        } else {
-                          return Container();
-                        }
+                        return Column(children: [
+                          TransactionWidget(
+                              transaction: transactions.allTransactions[index]),
+                          const ListCardDivider()
+                        ]);
                       },
                     );
                   }

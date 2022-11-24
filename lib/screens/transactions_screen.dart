@@ -31,17 +31,17 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(0),
         child: Consumer<BankTransactionsRepository>(
-          builder: (context, accounts, child) {
-            if (accounts.allTransactions.isEmpty) {
+          builder: (context, transactions, child) {
+            if (transactions.allTransactions.isEmpty) {
               return const _NoTransactions();
             } else {
               return ListView.builder(
                 // physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                itemCount: accounts.allTransactions.length,
+                itemCount: transactions.allTransactions.length,
                 itemBuilder: (context, index) {
                   BankTransaction banckTransaction =
-                      accounts.allTransactions[index];
+                      transactions.allTransactions[index];
                   return Dismissible(
                     key: UniqueKey(),
                     background: Container(
