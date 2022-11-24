@@ -4,6 +4,7 @@ import 'package:guarawallet/components/transaction_widget.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/screens/transaction_form_screen.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -28,53 +29,88 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
-          padding: const EdgeInsets.all(0),
-          child: Consumer<BankTransactionsRepository>(
-            builder: (context, accounts, child) {
-              if (accounts.allTransactions.isEmpty) {
-                // TODO: Show custom widget when there is no saved transaction
-                return Container();
-              } else {
-                return ListView.builder(
-                  // physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                  itemCount: accounts.allTransactions.length,
-                  itemBuilder: (context, index) {
-                    BankTransaction banckTransaction =
-                        accounts.allTransactions[index];
-                    return Dismissible(
-                      key: UniqueKey(),
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        color: Colors.red,
-                        child: const Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Icon(Icons.delete),
-                        ),
+        padding: const EdgeInsets.all(0),
+        child: Consumer<BankTransactionsRepository>(
+          builder: (context, accounts, child) {
+            if (accounts.allTransactions.isEmpty) {
+              return const _NoTransactions();
+            } else {
+              return ListView.builder(
+                // physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+                itemCount: accounts.allTransactions.length,
+                itemBuilder: (context, index) {
+                  BankTransaction banckTransaction =
+                      accounts.allTransactions[index];
+                  return Dismissible(
+                    key: UniqueKey(),
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      color: Colors.red,
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 15),
+                        child: Icon(Icons.delete),
                       ),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        bankTransactionsRepository.delete(
-                            banckTransaction, accountsRepository);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.grey,
-                            content: Text(
-                                'Transação \'${banckTransaction.name}\' foi deletada!'),
-                          ),
-                        );
-                      },
-                      child: Column(children: [
-                        const ListCardDivider(),
-                        TransactionWidget(transaction: banckTransaction),
-                        const ListCardDivider()
-                      ]),
-                    );
-                  },
-                );
-              }
-            },
-          )),
+                    ),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      bankTransactionsRepository.delete(
+                          banckTransaction, accountsRepository);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.grey,
+                          content: Text(
+                              'Transação \'${banckTransaction.name}\' foi deletada!'),
+                        ),
+                      );
+                    },
+                    child: Column(children: [
+                      const ListCardDivider(),
+                      TransactionWidget(transaction: banckTransaction),
+                      const ListCardDivider()
+                    ]),
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TransactionFormScreen(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _NoTransactions extends StatelessWidget {
+  const _NoTransactions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: const [
+          Icon(
+            Icons.swap_horiz,
+            size: 68,
+          ),
+          Text(
+            'Não existem transações.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18),
+          )
+        ],
+      ),
     );
   }
 }

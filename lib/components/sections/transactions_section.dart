@@ -52,7 +52,7 @@ class TransactionsSection extends StatelessWidget {
 }
 
 class _NoTransactions extends StatelessWidget {
-  const _NoTransactions({super.key});
+  const _NoTransactions();
 
   @override
   Widget build(BuildContext context) {
