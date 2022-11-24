@@ -51,6 +51,33 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     ),
                   ),
                   direction: DismissDirection.endToStart,
+                  confirmDismiss: (direction) async {
+                    return await showDialog(
+                      context: context,
+                      builder: ((context) {
+                        return AlertDialog(
+                          // TODO: Redo this front end
+                          content: const Text('Deseja deletar esta transação?'),
+                          actions: [
+                            TextButton(
+                              child: Text(
+                                'Confirmar',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            ),
+                            TextButton(
+                              child: Text(
+                                'Cancelar',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                          ],
+                        );
+                      }),
+                    );
+                  },
                   onDismissed: (direction) {
                     bankTransactionsRepository.delete(
                         banckTransaction, accountsRepository);

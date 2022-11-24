@@ -45,6 +45,36 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                         child: Icon(Icons.delete),
                       ),
                     ),
+                    confirmDismiss: (direction) async {
+                      return await showDialog(
+                        context: context,
+                        builder: ((context) {
+                          return AlertDialog(
+                            // TODO: Redo this front end (use diferent style for buttons and content)
+                            content: const Text(
+                                'Caso deseje deletar esta conta, todas as transações relacionadas a ela tamém serão deletadas.'),
+                            actions: [
+                              TextButton(
+                                child: Text(
+                                  'Confirmar',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                              ),
+                              TextButton(
+                                child: Text(
+                                  'Cancelar',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                              ),
+                            ],
+                          );
+                        }),
+                      );
+                    },
                     onDismissed: (direction) {
                       accountsRepository.delete(account);
 
