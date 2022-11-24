@@ -91,6 +91,16 @@ class AccountsRepository extends ChangeNotifier {
     return map;
   }
 
+  delete(Account account) async {
+    final Database database = await getDataBase();
+    await database.delete(_tableName, where: '$_id = ${account.id}');
+
+    allAccounts.remove(account);
+    // TODO: Delete transactions related with this account
+
+    notifyListeners();
+  }
+
   deleteAll() async {
     final Database database = await getDataBase();
     await database.delete(_tableName);
