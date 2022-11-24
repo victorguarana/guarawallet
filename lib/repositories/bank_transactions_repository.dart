@@ -5,7 +5,6 @@ import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
-// TODO: Rename file and transictions stuff
 class BankTransactionsRepository extends ChangeNotifier {
   static const String tableSQL =
       'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL, $_createdWhen DATE NOT NULL)';

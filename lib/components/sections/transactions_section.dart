@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
-import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/transactions_screen.dart';
 import 'package:provider/provider.dart';
 

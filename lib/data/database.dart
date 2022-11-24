@@ -1,5 +1,5 @@
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

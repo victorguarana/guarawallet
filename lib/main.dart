@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/home_screen.dart';
 import 'package:guarawallet/themes/my_theme.dart';
 import 'package:provider/provider.dart';

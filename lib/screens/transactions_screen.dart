@@ -3,7 +3,7 @@ import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/repositories/bank_transctions_repository.dart';
+import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
 import 'package:provider/provider.dart';
 
