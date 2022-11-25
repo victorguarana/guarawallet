@@ -10,7 +10,7 @@ class OverviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).secondaryHeaderColor,
           borderRadius:
               const BorderRadius.vertical(bottom: Radius.circular(25))),
       child: const Padding(
@@ -22,7 +22,7 @@ class OverviewSection extends StatelessWidget {
 }
 
 class _SummaryWidget extends StatefulWidget {
-  const _SummaryWidget({super.key});
+  const _SummaryWidget();
 
   @override
   State<_SummaryWidget> createState() => _SummaryWidgetState();

@@ -26,9 +26,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     accountsRepository = context.watch<AccountsRepository>();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: const Text('Transações'),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Consumer<BankTransactionsRepository>(
         builder: (context, transactions, child) {
@@ -48,7 +48,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     color: Colors.red,
                     child: const Padding(
                       padding: EdgeInsets.only(right: 15),
-                      child: Icon(Icons.delete),
+                      child: Icon(Icons.delete, color: Colors.white),
                     ),
                   ),
                   direction: DismissDirection.endToStart,
@@ -57,22 +57,23 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       context: context,
                       builder: ((context) {
                         return AlertDialog(
-                          // TODO: Redo this front end
-                          content: const Text('Deseja deletar esta transação?'),
+                          content: Text(
+                            'Deseja deletar esta transação?',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           actions: [
                             TextButton(
-                              child: Text(
-                                'Confirmar',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              onPressed: () => Navigator.of(context).pop(true),
-                            ),
-                            TextButton(
-                              child: Text(
+                              child: const Text(
                                 'Cancelar',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: TextStyle(color: Colors.grey),
                               ),
                               onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                            TextButton(
+                              child: const Text(
+                                'Confirmar',
+                              ),
+                              onPressed: () => Navigator.of(context).pop(true),
                             ),
                           ],
                         );
