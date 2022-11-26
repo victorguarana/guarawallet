@@ -38,9 +38,12 @@ class _SummaryWidgetState extends State<_SummaryWidget> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Column(
         children: [
-          const Text(
+          Text(
             'Saldo Geral:',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[300],
+            ),
           ),
           Consumer<AccountsRepository>(builder: (context, accounts, child) {
             return RealText(
@@ -55,10 +58,13 @@ class _SummaryWidgetState extends State<_SummaryWidget> {
       ),
       Column(
         children: [
-          const Text(
+          Text(
             'Saldo Esperado:',
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 12),
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[300],
+              fontSize: 12,
+            ),
           ),
           Consumer<AccountsRepository>(builder: (context, accounts, child) {
             return RealText(
