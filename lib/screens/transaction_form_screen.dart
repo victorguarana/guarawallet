@@ -3,6 +3,7 @@ import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
+import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
@@ -44,10 +45,17 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  bool fieldValidator(String? field) {
+  bool _fieldValidator(String? field) {
     if (field != null && field.isEmpty) {
       return true;
     }
+    return false;
+  }
+
+  bool _zeroValidator(String? value) {
+    double? valueDouble = double.tryParse(value!);
+    if (valueDouble == null || valueDouble == 0) return true;
+
     return false;
   }
 
@@ -71,7 +79,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: (String? value) {
-                    if (fieldValidator(value)) {
+                    if (_fieldValidator(value)) {
                       return 'Insira o nome da Transação';
                     }
                     return null;
@@ -88,16 +96,26 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: (String? value) {
-                    if (fieldValidator(value)) {
+                    if (_fieldValidator(value)) {
                       return 'Insira o valor da Transação';
+                    } else if (_zeroValidator(value)) {
+                      return 'Transação não pode ter valor 0';
                     }
                     return null;
+                  },
+                  onChanged: (string) {
+                    string = Util.formatCurrency(string);
+                    valueController.value = TextEditingValue(
+                      text: string,
+                      selection: TextSelection.collapsed(offset: string.length),
+                    );
                   },
                   keyboardType: TextInputType.number,
                   controller: valueController,
                   textAlign: TextAlign.center,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.attach_money),
+                  decoration: InputDecoration(
+                    prefixText: Util.currency,
+                    icon: const Icon(Icons.attach_money),
                     hintText: 'Valor',
                     filled: true,
                   ),
