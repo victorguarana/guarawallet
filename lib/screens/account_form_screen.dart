@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
 class AccountFormScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class AccountFormScreenState extends State<AccountFormScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  bool nameValidator(String? name) {
+  bool fieldValidator(String? name) {
     if (name != null && name.isEmpty) {
       return true;
     }
@@ -44,7 +45,7 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: (String? value) {
-                    if (nameValidator(value)) {
+                    if (fieldValidator(value)) {
                       return 'Insira o nome da Conta';
                     }
                     return null;
@@ -61,11 +62,25 @@ class AccountFormScreenState extends State<AccountFormScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  validator: (String? value) {
+                    if (fieldValidator(value)) {
+                      return 'Insira o saldo da Conta';
+                    }
+                    return null;
+                  },
+                  onChanged: (string) {
+                    string = Util.formatCurrency(string);
+                    currentBalanceController.value = TextEditingValue(
+                      text: string,
+                      selection: TextSelection.collapsed(offset: string.length),
+                    );
+                  },
                   keyboardType: TextInputType.number,
                   controller: currentBalanceController,
                   textAlign: TextAlign.center,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.attach_money),
+                  decoration: InputDecoration(
+                    prefixText: Util.currency,
+                    icon: const Icon(Icons.attach_money),
                     hintText: 'Saldo Atual',
                     filled: true,
                   ),
