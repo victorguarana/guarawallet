@@ -88,10 +88,10 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                   if (_formKey.currentState!.validate()) {
                     accountsRepository.save(Account(
                       name: nameController.text,
-                      currentBalance:
-                          double.parse(currentBalanceController.text),
-                      expectedBalance:
-                          double.parse(currentBalanceController.text),
+                      currentBalance: double.parse(Util.formatDoubleToParse(
+                          currentBalanceController.text)),
+                      expectedBalance: double.parse(Util.formatDoubleToParse(
+                          currentBalanceController.text)),
                     ));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

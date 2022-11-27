@@ -146,7 +146,8 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     bankTransactionsRepository.save(
                         BankTransaction(
                           name: nameController.text,
-                          value: double.parse(valueController.text),
+                          value: double.parse(
+                              Util.formatDoubleToParse(valueController.text)),
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),
