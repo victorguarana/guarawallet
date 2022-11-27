@@ -6,10 +6,6 @@ ThemeData myTheme = ThemeData(
   primaryColor: ThemeColors.secondaryColor,
   secondaryHeaderColor: ThemeColors.primaryColor,
   textTheme: const TextTheme(
-    bodyMedium: TextStyle(
-        // fontSize: 16,
-        // fontWeight: FontWeight.bold,
-        ),
     bodySmall: TextStyle(
       color: Colors.grey,
       fontSize: 12,
