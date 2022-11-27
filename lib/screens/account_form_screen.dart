@@ -35,7 +35,6 @@ class AccountFormScreenState extends State<AccountFormScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Nova Conta'),
-          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Center(
           child: Column(
@@ -51,7 +50,6 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                     return null;
                   },
                   controller: nameController,
-                  textAlign: TextAlign.center,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.account_box),
                     hintText: 'Nome da conta',
@@ -77,7 +75,6 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                   },
                   keyboardType: TextInputType.number,
                   controller: currentBalanceController,
-                  textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     prefixText: Util.currency,
                     icon: const Icon(Icons.attach_money),
@@ -91,10 +88,10 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                   if (_formKey.currentState!.validate()) {
                     accountsRepository.save(Account(
                       name: nameController.text,
-                      currentBalance:
-                          double.parse(currentBalanceController.text),
-                      expectedBalance:
-                          double.parse(currentBalanceController.text),
+                      currentBalance: double.parse(Util.formatDoubleToParse(
+                          currentBalanceController.text)),
+                      expectedBalance: double.parse(Util.formatDoubleToParse(
+                          currentBalanceController.text)),
                     ));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

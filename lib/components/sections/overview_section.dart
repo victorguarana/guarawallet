@@ -10,7 +10,7 @@ class OverviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).secondaryHeaderColor,
           borderRadius:
               const BorderRadius.vertical(bottom: Radius.circular(25))),
       child: const Padding(
@@ -22,7 +22,7 @@ class OverviewSection extends StatelessWidget {
 }
 
 class _SummaryWidget extends StatefulWidget {
-  const _SummaryWidget({super.key});
+  const _SummaryWidget();
 
   @override
   State<_SummaryWidget> createState() => _SummaryWidgetState();
@@ -38,9 +38,12 @@ class _SummaryWidgetState extends State<_SummaryWidget> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Column(
         children: [
-          const Text(
+          Text(
             'Saldo Geral:',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[300],
+            ),
           ),
           Consumer<AccountsRepository>(builder: (context, accounts, child) {
             return RealText(
@@ -55,10 +58,13 @@ class _SummaryWidgetState extends State<_SummaryWidget> {
       ),
       Column(
         children: [
-          const Text(
+          Text(
             'Saldo Esperado:',
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 12),
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[300],
+              fontSize: 12,
+            ),
           ),
           Consumer<AccountsRepository>(builder: (context, accounts, child) {
             return RealText(

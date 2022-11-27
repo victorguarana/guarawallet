@@ -24,9 +24,9 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
     bankTransactionsRepository = context.watch<BankTransactionsRepository>();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: const Text('Contas'),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Consumer<AccountsRepository>(
         builder: (context, accounts, child) {
@@ -45,33 +45,34 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                       color: Colors.red,
                       child: const Padding(
                         padding: EdgeInsets.only(right: 15),
-                        child: Icon(Icons.delete),
+                        child: Icon(Icons.delete, color: Colors.white),
                       ),
                     ),
+                    direction: DismissDirection.endToStart,
                     confirmDismiss: (direction) async {
                       return await showDialog(
                         context: context,
                         builder: ((context) {
                           return AlertDialog(
-                            // TODO: Redo this front end (use diferent style for buttons and content)
-                            content: const Text(
-                                'Caso deseje deletar esta conta, todas as transações relacionadas a ela tamém serão deletadas.'),
+                            content: Text(
+                              'Caso deseje deletar esta conta, todas as transações relacionadas a ela tamém serão deletadas.',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                             actions: [
                               TextButton(
-                                child: Text(
-                                  'Confirmar',
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                onPressed: () =>
-                                    Navigator.of(context).pop(true),
-                              ),
-                              TextButton(
-                                child: Text(
+                                child: const Text(
                                   'Cancelar',
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  style: TextStyle(color: Colors.grey),
                                 ),
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
+                              ),
+                              TextButton(
+                                child: const Text(
+                                  'Confirmar',
+                                ),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                               ),
                             ],
                           );

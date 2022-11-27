@@ -24,10 +24,14 @@ class AccountWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              RealText(value: account.currentBalance),
+              RealText(
+                value: account.currentBalance,
+                changeColor: true,
+              ),
               RealText(
                 value: account.expectedBalance,
                 style: Theme.of(context).textTheme.bodySmall,
+                changeColor: true,
               ),
             ],
           )

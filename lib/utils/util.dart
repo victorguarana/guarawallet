@@ -7,6 +7,10 @@ class Util {
     return formater.format(dt);
   }
 
+  static String formatDoubleToParse(String value) {
+    return value.replaceAll('.', '').replaceAll(',', '.');
+  }
+
   static String formatShow(DateTime dt) {
     DateFormat formater = DateFormat('dd/MM/yyyy');
 
@@ -36,7 +40,7 @@ class Util {
   }
 
   static String _removeLetters(String value) =>
-      value.replaceAll(RegExp(r'[^0-9/,/.]'), '');
+      value.replaceAll(RegExp(r'[^0-9,.]'), '');
 
   static String _removeCommas(String value) {
     if (value.indexOf(',') != value.lastIndexOf(',')) {

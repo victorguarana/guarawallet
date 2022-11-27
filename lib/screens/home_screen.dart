@@ -17,13 +17,10 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: OverviewSection(),
-          ),
+          const OverviewSection(),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(bottom: 120),
+              padding: const EdgeInsets.only(top: 10, bottom: 120),
               children: const [
                 AccountsSection(),
                 TransactionsSection(),
@@ -38,6 +35,7 @@ class HomeScreen extends StatelessWidget {
         spacing: 10,
         children: [
           SpeedDialChild(
+            backgroundColor: Theme.of(context).primaryColor,
             label: 'Adicionar transação',
             child: const Icon(Icons.swap_horiz),
             onTap: () {
@@ -50,6 +48,7 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           SpeedDialChild(
+            backgroundColor: Theme.of(context).primaryColor,
             label: 'Adicionar conta',
             child: const Icon(Icons.account_balance),
             onTap: () {
@@ -62,6 +61,7 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           SpeedDialChild(
+            backgroundColor: Colors.orange,
             label: 'Limpar transações (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {
@@ -69,6 +69,7 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           SpeedDialChild(
+            backgroundColor: Colors.orange,
             label: 'Limpar Contas (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {

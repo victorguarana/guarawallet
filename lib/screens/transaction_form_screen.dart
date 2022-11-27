@@ -35,7 +35,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     for (Account account in accounts) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
         value: account,
-        child: Center(child: Text(account.name)),
+        child: Text(account.name),
       );
       setState(() {
         _accountsList.add(accountItem);
@@ -69,7 +69,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Nova Transação'),
-          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Center(
           child: Column(
@@ -85,8 +84,8 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     return null;
                   },
                   controller: nameController,
-                  textAlign: TextAlign.center,
                   decoration: const InputDecoration(
+                    icon: Icon(Icons.text_snippet),
                     hintText: 'Nome',
                     filled: true,
                   ),
@@ -112,7 +111,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   },
                   keyboardType: TextInputType.number,
                   controller: valueController,
-                  textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     prefixText: Util.currency,
                     icon: const Icon(Icons.attach_money),
@@ -148,7 +146,8 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     bankTransactionsRepository.save(
                         BankTransaction(
                           name: nameController.text,
-                          value: double.parse(valueController.text),
+                          value: double.parse(
+                              Util.formatDoubleToParse(valueController.text)),
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),

@@ -16,7 +16,7 @@ class TransactionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(transaction.name),
-              RealText(value: transaction.value),
+              RealText(value: transaction.value, changeColor: true),
             ],
           ),
           Row(
