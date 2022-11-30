@@ -18,11 +18,16 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   late AccountsRepository accountsRepository;
 
   Account? _selectedAccount;
+  bool _alreadyPaid = true;
+  DateTime? _payDay = DateTime.now();
 
   final List<DropdownMenuItem> _accountsList = [];
+  final _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController valueController = TextEditingController();
+  TextEditingController dateController =
+      TextEditingController(text: Util.formatShow(DateTime.now()));
 
   @override
   void initState() {
@@ -42,8 +47,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       });
     }
   }
-
-  final _formKey = GlobalKey<FormState>();
 
   bool _fieldValidator(String? field) {
     if (field != null && field.isEmpty) {
@@ -140,11 +143,59 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: dateController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.date_range),
+                    hintText: 'Data de Pagamento',
+                    filled: true,
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100));
+
+                    if (pickedDate != null) {
+                      String formattedDate = Util.formatShow(pickedDate);
+                      setState(() {
+                        _payDay = pickedDate;
+                        dateController.text = formattedDate;
+                      });
+                    } else {
+                      _payDay = null;
+                      dateController.text = '';
+                    }
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      onChanged: (value) {
+                        setState(() {
+                          _alreadyPaid = !_alreadyPaid;
+                        });
+                      },
+                      value: _alreadyPaid,
+                    ),
+                    const Text('Já foi debitado?'),
+                  ],
+                ),
+              ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     bankTransactionsRepository.save(
                         BankTransaction(
+                          payDay: _payDay,
+                          alreadyPaid: _alreadyPaid,
                           name: nameController.text,
                           value: double.parse(
                               Util.formatDoubleToParse(valueController.text)),
