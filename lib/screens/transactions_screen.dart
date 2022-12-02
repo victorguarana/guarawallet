@@ -39,63 +39,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
               itemCount: transactions.allTransactions.length,
               itemBuilder: (context, index) {
-                BankTransaction banckTransaction =
+                BankTransaction bankTransaction =
                     transactions.allTransactions[index];
-                return Dismissible(
-                  key: UniqueKey(),
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    color: Colors.red,
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 15),
-                      child: Icon(Icons.delete, color: Colors.white),
-                    ),
-                  ),
-                  direction: DismissDirection.endToStart,
-                  confirmDismiss: (direction) async {
-                    return await showDialog(
-                      context: context,
-                      builder: ((context) {
-                        return AlertDialog(
-                          content: Text(
-                            'Deseja deletar esta transação?',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          actions: [
-                            TextButton(
-                              child: const Text(
-                                'Cancelar',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              onPressed: () => Navigator.of(context).pop(false),
-                            ),
-                            TextButton(
-                              child: const Text(
-                                'Confirmar',
-                              ),
-                              onPressed: () => Navigator.of(context).pop(true),
-                            ),
-                          ],
-                        );
-                      }),
-                    );
-                  },
-                  onDismissed: (direction) {
-                    bankTransactionsRepository.delete(
-                        banckTransaction, accountsRepository);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.grey,
-                        content: Text(
-                            'Transação \'${banckTransaction.name}\' foi deletada!'),
-                      ),
-                    );
-                  },
-                  child: Column(children: [
-                    const ListCardDivider(),
-                    TransactionWidget(transaction: banckTransaction),
-                    const ListCardDivider()
-                  ]),
+                return _AccountItem(
+                  bankTransaction: bankTransaction,
+                  bankTransactionsRepository: bankTransactionsRepository,
+                  accountsRepository: accountsRepository,
                 );
               },
             );
@@ -113,6 +62,111 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class _AccountItem extends StatelessWidget {
+  final BankTransaction bankTransaction;
+  final BankTransactionsRepository bankTransactionsRepository;
+  final AccountsRepository accountsRepository;
+
+  const _AccountItem(
+      {required this.bankTransaction,
+      required this.bankTransactionsRepository,
+      required this.accountsRepository});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        alignment: Alignment.centerLeft,
+        color: Colors.green,
+        child: const Padding(
+          padding: EdgeInsets.only(left: 15),
+          child: Icon(Icons.monetization_on_outlined, color: Colors.white),
+        ),
+      ),
+      secondaryBackground: Container(
+        alignment: Alignment.centerRight,
+        color: Colors.red,
+        child: const Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Icon(Icons.delete, color: Colors.white),
+        ),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // TODO: move this logic to model
+          bankTransaction.alreadyPaid = !bankTransaction.alreadyPaid;
+          if (bankTransaction.alreadyPaid) {
+            bankTransaction.payDay = DateTime.now();
+          } else {
+            bankTransaction.payDay = null;
+          }
+
+          bankTransactionsRepository.paid(bankTransaction, accountsRepository,
+              !bankTransaction.alreadyPaid);
+          return false;
+        }
+
+        if (direction == DismissDirection.endToStart) {
+          return await showDialog(
+            context: context,
+            builder: ((context) {
+              return const _AlertDialog();
+            }),
+          );
+        }
+      },
+      onDismissed: (direction) {
+        if (direction != DismissDirection.endToStart) {
+          return;
+        }
+        bankTransactionsRepository.delete(bankTransaction, accountsRepository);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Theme.of(context).secondaryHeaderColor,
+            content:
+                Text('Transação \'${bankTransaction.name}\' foi deletada!'),
+          ),
+        );
+      },
+      child: Column(children: [
+        const ListCardDivider(),
+        TransactionWidget(transaction: bankTransaction),
+        const ListCardDivider()
+      ]),
+    );
+  }
+}
+
+class _AlertDialog extends StatelessWidget {
+  const _AlertDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Text(
+        'Deseja deletar esta transação?',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      actions: [
+        TextButton(
+          child: const Text(
+            'Cancelar',
+            style: TextStyle(color: Colors.grey),
+          ),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        TextButton(
+          child: const Text(
+            'Confirmar',
+          ),
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
     );
   }
 }

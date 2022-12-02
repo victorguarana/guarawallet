@@ -32,21 +32,46 @@ class BankTransactionsRepository extends ChangeNotifier {
 
     // TODO: Move this logic to other class?
     await database.transaction((txn) async {
-      await txn.insert(_tablename, toMap(bankTransaction));
-      await accountsRepository.debitAccount(
-          txn, bankTransaction.value, bankTransaction.account);
+      await txn.insert(_tablename, toMap(bankTransaction),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
+      if (bankTransaction.alreadyPaid) {
+        await accountsRepository.debitAccount(
+            txn, bankTransaction.value, bankTransaction.account);
+      }
     });
 
     allTransactions.add(bankTransaction);
     notifyListeners();
   }
 
+  paid(BankTransaction bankTransaction, AccountsRepository accountsRepository,
+      bool alreadyPaid) async {
+    final Database database = await getDataBase();
+
+    // TODO: Move this logic to other class?
+    await database.transaction((txn) async {
+      await txn.update(_tablename, toMap(bankTransaction),
+          where: '$_id = ?',
+          whereArgs: [bankTransaction.id],
+          conflictAlgorithm: ConflictAlgorithm.rollback);
+      if (bankTransaction.alreadyPaid) {
+        await accountsRepository.debitAccount(
+            txn, bankTransaction.value, bankTransaction.account);
+      } else {
+        await accountsRepository.debitAccount(
+            txn, bankTransaction.value * -1, bankTransaction.account);
+      }
+
+      notifyListeners();
+    });
+  }
+
   Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tablename,
-        orderBy: '$_createdWhen desc',
+        orderBy: '$_payDay DESC NULLS FIRST',
         where:
-            'strftime(\'%m\', $_createdWhen) = strftime(\'%m\', CURRENT_TIMESTAMP) AND strftime(\'%Y\', $_createdWhen) = strftime(\'%Y\', CURRENT_TIMESTAMP)');
+            '(strftime(\'%m\', $_payDay) = strftime(\'%m\', \'now\', \'localtime\') AND strftime(\'%Y\', $_payDay) = strftime(\'%Y\', \'now\', \'localtime\')) OR $_payDay IS NULL');
     return toList(result);
   }
 
@@ -63,6 +88,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     return toList(result);
   }
 
+  // TODO: Move this method to model?
   List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
     final List<BankTransaction> bankTransactions = [];
 
@@ -84,6 +110,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     return bankTransactions;
   }
 
+  // TODO: Move this method to model?
   Map<String, dynamic> toMap(BankTransaction bankTransaction) {
     final Map<String, dynamic> map = {};
     map[_id] = bankTransaction.id;
@@ -94,7 +121,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     map[_payDay] = bankTransaction.payDay == null
         ? null
         : Util.formatToDate(bankTransaction.payDay!);
-    map[_alreadyPaid] = bankTransaction.alreadyPaid;
+    map[_alreadyPaid] = bankTransaction.alreadyPaid.toString();
     return map;
   }
 
