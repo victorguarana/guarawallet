@@ -57,7 +57,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const TransactionFormScreen(),
+              builder: (context) => const TransactionFormScreen(
+                isDebit: true,
+              ),
             ),
           );
         },

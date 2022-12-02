@@ -36,13 +36,28 @@ class HomeScreen extends StatelessWidget {
         children: [
           SpeedDialChild(
             backgroundColor: Theme.of(context).primaryColor,
-            label: 'Adicionar transação',
-            child: const Icon(Icons.swap_horiz),
+            label: 'Adicionar saída',
+            child: Icon(Icons.swap_horiz, color: Colors.red[400]),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const TransactionFormScreen(),
+                  builder: (context) =>
+                      const TransactionFormScreen(isDebit: true),
+                ),
+              );
+            },
+          ),
+          SpeedDialChild(
+            backgroundColor: Theme.of(context).primaryColor,
+            label: 'Adicionar entrada',
+            child: Icon(Icons.swap_horiz, color: Colors.green[400]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const TransactionFormScreen(isDebit: false),
                 ),
               );
             },

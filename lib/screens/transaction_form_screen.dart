@@ -7,7 +7,8 @@ import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
-  const TransactionFormScreen({super.key});
+  final bool isDebit;
+  const TransactionFormScreen({super.key, required this.isDebit});
 
   @override
   State<TransactionFormScreen> createState() => TransactionFormScreenState();
@@ -71,7 +72,10 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Nova Transação'),
+          title: widget.isDebit
+              ? const Text('Nova saída')
+              : const Text('Nova entrada'),
+          backgroundColor: widget.isDebit ? Colors.red : Colors.green,
         ),
         body: Center(
           child: Column(
@@ -90,7 +94,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.text_snippet),
                     hintText: 'Nome',
-                    filled: true,
                   ),
                 ),
               ),
@@ -118,7 +121,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     prefixText: Util.currency,
                     icon: const Icon(Icons.attach_money),
                     hintText: 'Valor',
-                    filled: true,
                   ),
                 ),
               ),
@@ -139,7 +141,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.account_balance),
                     hintText: 'Conta',
-                    filled: true,
                   ),
                 ),
               ),
@@ -151,7 +152,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.date_range),
                     hintText: 'Data de Pagamento',
-                    filled: true,
                   ),
                   onTap: () async {
                     DateTime? pickedDate = await showDatePicker(
@@ -197,8 +197,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                           payDay: _payDay,
                           alreadyPaid: _alreadyPaid,
                           name: nameController.text,
-                          value: double.parse(
-                              Util.formatDoubleToParse(valueController.text)),
+                          value: widget.isDebit
+                              ? double.parse(Util.formatDoubleToParse(
+                                      valueController.text)) *
+                                  -1
+                              : double.parse(Util.formatDoubleToParse(
+                                  valueController.text)),
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),
