@@ -66,8 +66,8 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result =
-        await database.query(_tablename, orderBy: '$_payDay DESC NULLS FIRST');
+    final List<Map<String, dynamic>> result = await database.query(_tablename,
+        orderBy: '$_payDay DESC, $_id NULLS FIRST');
     // TODO: Put this back when pagination is ready
     // where:
     //     '(strftime(\'%m\', $_payDay) = strftime(\'%m\', \'now\', \'localtime\') AND strftime(\'%Y\', $_payDay) = strftime(\'%Y\', \'now\', \'localtime\')) OR $_payDay IS NULL');
