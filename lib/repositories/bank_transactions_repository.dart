@@ -34,10 +34,8 @@ class BankTransactionsRepository extends ChangeNotifier {
     await database.transaction((txn) async {
       await txn.insert(_tablename, toMap(bankTransaction),
           conflictAlgorithm: ConflictAlgorithm.rollback);
-      if (bankTransaction.alreadyPaid) {
-        await accountsRepository.debitAccount(
-            txn, bankTransaction.value, bankTransaction.account);
-      }
+      await accountsRepository.debitAccount(txn, bankTransaction.value,
+          bankTransaction.account, bankTransaction.alreadyPaid);
     });
 
     allTransactions.add(bankTransaction);
@@ -55,10 +53,10 @@ class BankTransactionsRepository extends ChangeNotifier {
           whereArgs: [bankTransaction.id],
           conflictAlgorithm: ConflictAlgorithm.rollback);
       if (bankTransaction.alreadyPaid) {
-        await accountsRepository.debitAccount(
+        await accountsRepository.payTransaction(
             txn, bankTransaction.value, bankTransaction.account);
       } else {
-        await accountsRepository.debitAccount(
+        await accountsRepository.payTransaction(
             txn, bankTransaction.value * -1, bankTransaction.account);
       }
 
@@ -68,10 +66,11 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result = await database.query(_tablename,
-        orderBy: '$_payDay DESC NULLS FIRST',
-        where:
-            '(strftime(\'%m\', $_payDay) = strftime(\'%m\', \'now\', \'localtime\') AND strftime(\'%Y\', $_payDay) = strftime(\'%Y\', \'now\', \'localtime\')) OR $_payDay IS NULL');
+    final List<Map<String, dynamic>> result =
+        await database.query(_tablename, orderBy: '$_payDay DESC NULLS FIRST');
+    // TODO: Put this back when pagination is ready
+    // where:
+    //     '(strftime(\'%m\', $_payDay) = strftime(\'%m\', \'now\', \'localtime\') AND strftime(\'%Y\', $_payDay) = strftime(\'%Y\', \'now\', \'localtime\')) OR $_payDay IS NULL');
     return toList(result);
   }
 
@@ -141,8 +140,8 @@ class BankTransactionsRepository extends ChangeNotifier {
     final Database database = await getDataBase();
     await database.transaction((txn) async {
       await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
-      await accountsRepository.debitAccount(
-          txn, (bankTransaction.value * -1), bankTransaction.account);
+      await accountsRepository.debitAccount(txn, (bankTransaction.value * -1),
+          bankTransaction.account, bankTransaction.alreadyPaid);
     });
 
     allTransactions.remove(bankTransaction);
