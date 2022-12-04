@@ -106,10 +106,12 @@ class _AccountItem extends StatelessWidget {
       key: UniqueKey(),
       background: Container(
         alignment: Alignment.centerLeft,
-        color: Colors.green,
-        child: const Padding(
-          padding: EdgeInsets.only(left: 15),
-          child: Icon(Icons.monetization_on_outlined, color: Colors.white),
+        color: bankTransaction.alreadyPaid ? Colors.orange : Colors.green,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: bankTransaction.alreadyPaid
+              ? const Icon(Icons.money_off, color: Colors.white)
+              : const Icon(Icons.attach_money, color: Colors.white),
         ),
       ),
       secondaryBackground: Container(

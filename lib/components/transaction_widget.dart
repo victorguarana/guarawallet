@@ -16,14 +16,17 @@ class TransactionWidget extends StatelessWidget {
           Row(children: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: Container(
-                height: 5,
-                width: 5,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  color: transaction.alreadyPaid ? null : Colors.orange,
-                ),
-              ),
+              child: transaction.alreadyPaid
+                  ? const Icon(
+                      Icons.attach_money,
+                      size: 20,
+                      color: Colors.green,
+                    )
+                  : const Icon(
+                      Icons.money_off,
+                      size: 20,
+                      color: Colors.orange,
+                    ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
