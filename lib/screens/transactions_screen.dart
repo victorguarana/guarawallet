@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
@@ -51,18 +52,39 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const TransactionFormScreen(
-                isDebit: true,
-              ),
-            ),
-          );
-        },
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        spacing: 10,
+        children: [
+          SpeedDialChild(
+            backgroundColor: Theme.of(context).primaryColor,
+            label: 'Adicionar saída',
+            child: Icon(Icons.swap_horiz, color: Colors.red[400]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const TransactionFormScreen(isDebit: true),
+                ),
+              );
+            },
+          ),
+          SpeedDialChild(
+            backgroundColor: Theme.of(context).primaryColor,
+            label: 'Adicionar entrada',
+            child: Icon(Icons.swap_horiz, color: Colors.green[400]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const TransactionFormScreen(isDebit: false),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
