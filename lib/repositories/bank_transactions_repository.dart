@@ -45,6 +45,7 @@ class BankTransactionsRepository extends ChangeNotifier {
   paid(BankTransaction bankTransaction, AccountsRepository accountsRepository,
       bool alreadyPaid) async {
     final Database database = await getDataBase();
+    bankTransaction.changePaid();
 
     // TODO: Move this logic to other class?
     await database.transaction((txn) async {

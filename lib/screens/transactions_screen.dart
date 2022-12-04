@@ -124,14 +124,6 @@ class _AccountItem extends StatelessWidget {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          // TODO: move this logic to model
-          bankTransaction.alreadyPaid = !bankTransaction.alreadyPaid;
-          if (bankTransaction.alreadyPaid) {
-            bankTransaction.payDay = DateTime.now();
-          } else {
-            bankTransaction.payDay = null;
-          }
-
           bankTransactionsRepository.paid(bankTransaction, accountsRepository,
               !bankTransaction.alreadyPaid);
           return false;

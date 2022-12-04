@@ -29,4 +29,13 @@ class BankTransaction {
     }
     return '-';
   }
+
+  void changePaid() {
+    alreadyPaid = !alreadyPaid;
+    if (alreadyPaid) {
+      payDay = DateTime.now();
+    } else {
+      payDay = null;
+    }
+  }
 }
