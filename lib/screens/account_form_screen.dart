@@ -53,7 +53,6 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.account_box),
                     hintText: 'Nome da conta',
-                    filled: true,
                   ),
                 ),
               ),
@@ -79,7 +78,6 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                     prefixText: Util.currency,
                     icon: const Icon(Icons.attach_money),
                     hintText: 'Saldo Atual',
-                    filled: true,
                   ),
                 ),
               ),

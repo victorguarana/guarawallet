@@ -7,7 +7,8 @@ import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
 class TransactionFormScreen extends StatefulWidget {
-  const TransactionFormScreen({super.key});
+  final bool isDebit;
+  const TransactionFormScreen({super.key, required this.isDebit});
 
   @override
   State<TransactionFormScreen> createState() => TransactionFormScreenState();
@@ -18,11 +19,16 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   late AccountsRepository accountsRepository;
 
   Account? _selectedAccount;
+  bool _alreadyPaid = true;
+  DateTime? _payDay = DateTime.now();
 
   final List<DropdownMenuItem> _accountsList = [];
+  final _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController valueController = TextEditingController();
+  TextEditingController dateController =
+      TextEditingController(text: Util.formatShow(DateTime.now()));
 
   @override
   void initState() {
@@ -42,8 +48,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       });
     }
   }
-
-  final _formKey = GlobalKey<FormState>();
 
   bool _fieldValidator(String? field) {
     if (field != null && field.isEmpty) {
@@ -68,7 +72,10 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Nova Transação'),
+          title: widget.isDebit
+              ? const Text('Nova saída')
+              : const Text('Nova entrada'),
+          backgroundColor: widget.isDebit ? Colors.red : Colors.green,
         ),
         body: Center(
           child: Column(
@@ -87,7 +94,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.text_snippet),
                     hintText: 'Nome',
-                    filled: true,
                   ),
                 ),
               ),
@@ -115,7 +121,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     prefixText: Util.currency,
                     icon: const Icon(Icons.attach_money),
                     hintText: 'Valor',
-                    filled: true,
                   ),
                 ),
               ),
@@ -136,8 +141,52 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.account_balance),
                     hintText: 'Conta',
-                    filled: true,
                   ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: dateController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.date_range),
+                    hintText: 'Data de Pagamento',
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100));
+
+                    if (pickedDate != null) {
+                      String formattedDate = Util.formatShow(pickedDate);
+                      setState(() {
+                        _payDay = pickedDate;
+                        dateController.text = formattedDate;
+                      });
+                    } else {
+                      _payDay = null;
+                      dateController.text = '';
+                    }
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      onChanged: (value) {
+                        setState(() {
+                          _alreadyPaid = !_alreadyPaid;
+                        });
+                      },
+                      value: _alreadyPaid,
+                    ),
+                    const Text('Já foi debitado?'),
+                  ],
                 ),
               ),
               ElevatedButton(
@@ -145,9 +194,15 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                   if (_formKey.currentState!.validate()) {
                     bankTransactionsRepository.save(
                         BankTransaction(
+                          payDay: _payDay,
+                          alreadyPaid: _alreadyPaid,
                           name: nameController.text,
-                          value: double.parse(
-                              Util.formatDoubleToParse(valueController.text)),
+                          value: widget.isDebit
+                              ? double.parse(Util.formatDoubleToParse(
+                                      valueController.text)) *
+                                  -1
+                              : double.parse(Util.formatDoubleToParse(
+                                  valueController.text)),
                           account: _selectedAccount!.name,
                           createdWhen: DateTime.now(),
                         ),

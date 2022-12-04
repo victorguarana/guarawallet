@@ -6,8 +6,14 @@ import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class BankTransactionsRepository extends ChangeNotifier {
-  static const String tableSQL =
-      'CREATE TABLE $_tablename ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_name TEXT NOT NULL, $_value REAL NOT NULL, $_account TEXT NOT NULL, $_createdWhen DATE NOT NULL)';
+  static const String tableSQL = '''CREATE TABLE $_tablename 
+        ($_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        $_name TEXT NOT NULL,
+        $_value REAL NOT NULL,
+        $_account TEXT NOT NULL,
+        $_createdWhen DATE NOT NULL,
+        $_payDay DATE,
+        $_alreadyPaid BOOLEAN NOT NULL)''';
   static const String _tablename = 'transactionTable';
 
   static const String _id = 'id';
@@ -15,6 +21,8 @@ class BankTransactionsRepository extends ChangeNotifier {
   static const String _value = 'value';
   static const String _account = 'account';
   static const String _createdWhen = 'created_when';
+  static const String _payDay = 'pay_day';
+  static const String _alreadyPaid = 'already_paid';
 
   List<BankTransaction> allTransactions = [];
 
@@ -24,21 +32,45 @@ class BankTransactionsRepository extends ChangeNotifier {
 
     // TODO: Move this logic to other class?
     await database.transaction((txn) async {
-      await txn.insert(_tablename, toMap(bankTransaction));
-      await accountsRepository.debitAccount(
-          txn, bankTransaction.value, bankTransaction.account);
+      await txn.insert(_tablename, toMap(bankTransaction),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
+      await accountsRepository.debitAccount(txn, bankTransaction.value,
+          bankTransaction.account, bankTransaction.alreadyPaid);
     });
 
     allTransactions.add(bankTransaction);
     notifyListeners();
   }
 
+  paid(BankTransaction bankTransaction, AccountsRepository accountsRepository,
+      bool alreadyPaid) async {
+    final Database database = await getDataBase();
+
+    // TODO: Move this logic to other class?
+    await database.transaction((txn) async {
+      await txn.update(_tablename, toMap(bankTransaction),
+          where: '$_id = ?',
+          whereArgs: [bankTransaction.id],
+          conflictAlgorithm: ConflictAlgorithm.rollback);
+      if (bankTransaction.alreadyPaid) {
+        await accountsRepository.payTransaction(
+            txn, bankTransaction.value, bankTransaction.account);
+      } else {
+        await accountsRepository.payTransaction(
+            txn, bankTransaction.value * -1, bankTransaction.account);
+      }
+
+      notifyListeners();
+    });
+  }
+
   Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tablename,
-        orderBy: '$_createdWhen desc',
-        where:
-            'strftime(\'%m\', $_createdWhen) = strftime(\'%m\', CURRENT_TIMESTAMP) AND strftime(\'%Y\', $_createdWhen) = strftime(\'%Y\', CURRENT_TIMESTAMP)');
+        orderBy: '$_payDay DESC, $_id NULLS FIRST');
+    // TODO: Put this back when pagination is ready
+    // where:
+    //     '(strftime(\'%m\', $_payDay) = strftime(\'%m\', \'now\', \'localtime\') AND strftime(\'%Y\', $_payDay) = strftime(\'%Y\', \'now\', \'localtime\')) OR $_payDay IS NULL');
     return toList(result);
   }
 
@@ -55,6 +87,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     return toList(result);
   }
 
+  // TODO: Move this method to model?
   List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
     final List<BankTransaction> bankTransactions = [];
 
@@ -65,6 +98,10 @@ class BankTransactionsRepository extends ChangeNotifier {
         value: transactionMap[_value],
         account: transactionMap[_account],
         createdWhen: DateTime.parse(transactionMap[_createdWhen]),
+        payDay: transactionMap[_payDay] == null
+            ? null
+            : DateTime.parse(transactionMap[_payDay]),
+        alreadyPaid: transactionMap[_alreadyPaid] != 0,
       );
       bankTransactions.add(bankTransaction);
     }
@@ -72,6 +109,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     return bankTransactions;
   }
 
+  // TODO: Move this method to model?
   Map<String, dynamic> toMap(BankTransaction bankTransaction) {
     final Map<String, dynamic> map = {};
     map[_id] = bankTransaction.id;
@@ -79,6 +117,10 @@ class BankTransactionsRepository extends ChangeNotifier {
     map[_value] = bankTransaction.value;
     map[_account] = bankTransaction.account;
     map[_createdWhen] = Util.formatToDate(bankTransaction.createdWhen!);
+    map[_payDay] = bankTransaction.payDay == null
+        ? null
+        : Util.formatToDate(bankTransaction.payDay!);
+    map[_alreadyPaid] = bankTransaction.alreadyPaid.toString();
     return map;
   }
 
@@ -98,8 +140,8 @@ class BankTransactionsRepository extends ChangeNotifier {
     final Database database = await getDataBase();
     await database.transaction((txn) async {
       await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
-      await accountsRepository.debitAccount(
-          txn, (bankTransaction.value * -1), bankTransaction.account);
+      await accountsRepository.debitAccount(txn, (bankTransaction.value * -1),
+          bankTransaction.account, bankTransaction.alreadyPaid);
     });
 
     allTransactions.remove(bankTransaction);

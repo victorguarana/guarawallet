@@ -34,10 +34,24 @@ class AccountsRepository extends ChangeNotifier {
   }
 
   // TODO: Move this logic to other class?
-  Future<void> debitAccount(
+  Future<void> debitAccount(Transaction txn, double value, String accountName,
+      bool alreadyPaid) async {
+    if (alreadyPaid) {
+      await txn.rawUpdate(
+          'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
+    } else {
+      await txn.rawUpdate(
+          'UPDATE ${AccountsRepository._tableName} SET $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
+    }
+
+    loadAll();
+  }
+
+  // TODO: Move this logic to other class?
+  Future<void> payTransaction(
       Transaction txn, double value, String accountName) async {
     await txn.rawUpdate(
-        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
+        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
 
     loadAll();
   }
