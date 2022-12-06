@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/account.dart';
-import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class AccountsRepository extends ChangeNotifier {
@@ -21,39 +20,42 @@ class AccountsRepository extends ChangeNotifier {
   double generalCurrentBalance = 0;
   double generalExpectedBalance = 0;
 
-  save(Account account) async {
-    final Database database = await getDataBase();
+  void notify() {
+    notifyListeners();
+  }
 
-    await database.insert(_tableName, toMap(account));
+  void save(Batch batch, Account account) async {
+    batch.insert(_tableName, toMap(account));
 
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
     generalExpectedBalance += account.expectedBalance;
-
-    notifyListeners();
   }
 
-  // TODO: Move this logic to other class?
-  Future<void> debitAccount(Transaction txn, double value, String accountName,
-      bool alreadyPaid) async {
+  void debitAccount(
+      Batch batch, double value, String accountName, bool alreadyPaid) {
     if (alreadyPaid) {
-      await txn.rawUpdate(
+      batch.rawUpdate(
           'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
     } else {
-      await txn.rawUpdate(
+      batch.rawUpdate(
           'UPDATE ${AccountsRepository._tableName} SET $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
     }
-
-    loadAll();
   }
 
-  // TODO: Move this logic to other class?
-  Future<void> payTransaction(
-      Transaction txn, double value, String accountName) async {
-    await txn.rawUpdate(
-        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
+  void delete(Batch batch, Account account) async {
+    batch.delete(_tableName, where: '$_id = ${account.id}');
 
-    loadAll();
+    allAccounts.remove(account);
+  }
+
+  void payTransaction(
+      Batch batch, double value, String accountName, bool alreadyPaid) async {
+    if (!alreadyPaid) {
+      value = value * -1;
+    }
+    batch.rawUpdate(
+        'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
   }
 
   Future<List<Account>> findAll() async {
@@ -105,20 +107,6 @@ class AccountsRepository extends ChangeNotifier {
     map[_currentBalance] = account.currentBalance;
     map[_expectedBalance] = account.expectedBalance;
     return map;
-  }
-
-  delete(Account account,
-      BankTransactionsRepository bankTransactionsRepository) async {
-    final Database database = await getDataBase();
-
-    // TODO: Move this logic to other class?
-    await database.transaction((txn) async {
-      await txn.delete(_tableName, where: '$_id = ${account.id}');
-      await bankTransactionsRepository.deleteAllAccount(txn, account.name);
-    });
-
-    allAccounts.remove(account);
-    notifyListeners();
   }
 
   deleteAll() async {

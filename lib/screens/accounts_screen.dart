@@ -3,6 +3,7 @@ import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
 import 'package:provider/provider.dart';
@@ -80,8 +81,8 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                       );
                     },
                     onDismissed: (direction) {
-                      accountsRepository.delete(
-                          account, bankTransactionsRepository);
+                      BankManager().deleteAccount(account,
+                          bankTransactionsRepository, accountsRepository);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

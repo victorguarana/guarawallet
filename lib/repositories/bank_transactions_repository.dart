@@ -26,43 +26,30 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
-  save(BankTransaction bankTransaction,
-      AccountsRepository accountsRepository) async {
-    final Database database = await getDataBase();
-
-    // TODO: Move this logic to other class?
-    await database.transaction((txn) async {
-      await txn.insert(_tablename, toMap(bankTransaction),
-          conflictAlgorithm: ConflictAlgorithm.rollback);
-      await accountsRepository.debitAccount(txn, bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
-    });
-
-    allTransactions.add(bankTransaction);
+  void notify() {
     notifyListeners();
   }
 
-  paid(BankTransaction bankTransaction, AccountsRepository accountsRepository,
-      bool alreadyPaid) async {
-    final Database database = await getDataBase();
-    bankTransaction.changePaid();
+  void save(Batch batch, BankTransaction bankTransaction) async {
+    batch.insert(_tablename, toMap(bankTransaction));
 
-    // TODO: Move this logic to other class?
-    await database.transaction((txn) async {
-      await txn.update(_tablename, toMap(bankTransaction),
-          where: '$_id = ?',
-          whereArgs: [bankTransaction.id],
-          conflictAlgorithm: ConflictAlgorithm.rollback);
-      if (bankTransaction.alreadyPaid) {
-        await accountsRepository.payTransaction(
-            txn, bankTransaction.value, bankTransaction.account);
-      } else {
-        await accountsRepository.payTransaction(
-            txn, bankTransaction.value * -1, bankTransaction.account);
-      }
+    allTransactions.add(bankTransaction);
+  }
 
-      notifyListeners();
-    });
+  void paid(Batch batch, BankTransaction bankTransaction,
+      AccountsRepository accountsRepository) {
+    batch.update(_tablename, toMap(bankTransaction),
+        where: '$_id = ?', whereArgs: [bankTransaction.id]);
+  }
+
+  void delete(Batch batch, BankTransaction bankTransaction) async {
+    batch.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+
+    allTransactions.remove(bankTransaction);
+  }
+
+  void deleteAllFromAccount(Batch batch, String accountName) async {
+    batch.delete(_tablename, where: '$_account = \'$accountName\'');
   }
 
   Future<List<BankTransaction>> findAll() async {
@@ -102,7 +89,7 @@ class BankTransactionsRepository extends ChangeNotifier {
         payDay: transactionMap[_payDay] == null
             ? null
             : DateTime.parse(transactionMap[_payDay]),
-        alreadyPaid: transactionMap[_alreadyPaid] != 0,
+        alreadyPaid: Util.stringToBool(transactionMap[_alreadyPaid]),
       );
       bankTransactions.add(bankTransaction);
     }
@@ -128,24 +115,5 @@ class BankTransactionsRepository extends ChangeNotifier {
   deleteAll() async {
     final Database database = await getDataBase();
     await database.delete(_tablename);
-  }
-
-  Future<void> deleteAllAccount(Transaction txn, String accountName) async {
-    await txn.delete(_tablename, where: '$_account = \'$accountName\'');
-
-    loadAll();
-  }
-
-  delete(BankTransaction bankTransaction,
-      AccountsRepository accountsRepository) async {
-    final Database database = await getDataBase();
-    await database.transaction((txn) async {
-      await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
-      await accountsRepository.debitAccount(txn, (bankTransaction.value * -1),
-          bankTransaction.account, bankTransaction.alreadyPaid);
-    });
-
-    allTransactions.remove(bankTransaction);
-    notifyListeners();
   }
 }

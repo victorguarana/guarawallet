@@ -49,4 +49,14 @@ class Util {
     }
     return value;
   }
+
+  static bool stringToBool(String value) {
+    if (value.toLowerCase() == 'true') {
+      return true;
+    }
+    if (value.toLowerCase() == 'false') {
+      return false;
+    }
+    throw '"$value" can not be parsed to boolean.';
+  }
 }
