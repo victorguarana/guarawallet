@@ -18,7 +18,7 @@ Future<Database> getDataBase() async {
     onDowngrade: (db, oldVersion, newVersion) {
       _resetDB(db);
     },
-    version: 2,
+    version: 1,
   );
 }
 

@@ -75,7 +75,6 @@ class BankTransactionsRepository extends ChangeNotifier {
     return toList(result);
   }
 
-  // TODO: Move this method to model?
   List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
     final List<BankTransaction> bankTransactions = [];
 
@@ -97,7 +96,6 @@ class BankTransactionsRepository extends ChangeNotifier {
     return bankTransactions;
   }
 
-  // TODO: Move this method to model?
   Map<String, dynamic> toMap(BankTransaction bankTransaction) {
     final Map<String, dynamic> map = {};
     map[_id] = bankTransaction.id;

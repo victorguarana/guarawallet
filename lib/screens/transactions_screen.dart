@@ -17,8 +17,6 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  // TODO: Check if exists a better way to get accounts repository outside this class
-  // (Maybe inside other repositories?)
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
