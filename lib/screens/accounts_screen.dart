@@ -86,8 +86,10 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          backgroundColor: Colors.grey,
-                          content: Text('Conta \'${account.name}\''),
+                          backgroundColor:
+                              Theme.of(context).secondaryHeaderColor,
+                          content:
+                              Text('Conta \'${account.name}\' foi deletada!'),
                         ),
                       );
                     },

@@ -67,7 +67,7 @@ class BankManager {
     batch.commit(noResult: true);
 
     bankTransactionsRepository.loadAll();
-    accountsRepository.notify();
+    accountsRepository.loadAll();
   }
 
   void deleteTransaction(
