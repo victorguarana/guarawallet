@@ -30,7 +30,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void save(Batch batch, BankTransaction bankTransaction) async {
+  void save(Batch batch, BankTransaction bankTransaction) {
     batch.insert(_tablename, toMap(bankTransaction));
 
     allTransactions.add(bankTransaction);
@@ -42,13 +42,13 @@ class BankTransactionsRepository extends ChangeNotifier {
         where: '$_id = ?', whereArgs: [bankTransaction.id]);
   }
 
-  void delete(Batch batch, BankTransaction bankTransaction) async {
+  void delete(Batch batch, BankTransaction bankTransaction) {
     batch.delete(_tablename, where: '$_id = ${bankTransaction.id}');
 
     allTransactions.remove(bankTransaction);
   }
 
-  void deleteAllFromAccount(Batch batch, String accountName) async {
+  void deleteAllFromAccount(Batch batch, String accountName) {
     batch.delete(_tablename, where: '$_account = \'$accountName\'');
   }
 
@@ -73,6 +73,11 @@ class BankTransactionsRepository extends ChangeNotifier {
     final List<Map<String, dynamic>> result =
         await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
     return toList(result);
+  }
+
+  Future<void> deleteAll() async {
+    final Database database = await getDataBase();
+    await database.delete(_tablename);
   }
 
   List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
@@ -108,10 +113,5 @@ class BankTransactionsRepository extends ChangeNotifier {
         : Util.formatToDate(bankTransaction.payDay!);
     map[_alreadyPaid] = bankTransaction.alreadyPaid.toString();
     return map;
-  }
-
-  deleteAll() async {
-    final Database database = await getDataBase();
-    await database.delete(_tablename);
   }
 }

@@ -24,7 +24,7 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void save(Batch batch, Account account) async {
+  void save(Batch batch, Account account) {
     batch.insert(_tableName, toMap(account));
 
     allAccounts.add(account);
@@ -43,14 +43,14 @@ class AccountsRepository extends ChangeNotifier {
     }
   }
 
-  void delete(Batch batch, Account account) async {
+  void delete(Batch batch, Account account) {
     batch.delete(_tableName, where: '$_id = ${account.id}');
 
     allAccounts.remove(account);
   }
 
   void payTransaction(
-      Batch batch, double value, String accountName, bool alreadyPaid) async {
+      Batch batch, double value, String accountName, bool alreadyPaid) {
     if (!alreadyPaid) {
       value = value * -1;
     }
@@ -84,6 +84,11 @@ class AccountsRepository extends ChangeNotifier {
     return toList(result);
   }
 
+  Future<void> deleteAll() async {
+    final Database database = await getDataBase();
+    await database.delete(_tableName);
+  }
+
   List<Account> toList(List<Map<String, dynamic>> accountMaps) {
     final List<Account> accounts = [];
 
@@ -107,10 +112,5 @@ class AccountsRepository extends ChangeNotifier {
     map[_currentBalance] = account.currentBalance;
     map[_expectedBalance] = account.expectedBalance;
     return map;
-  }
-
-  deleteAll() async {
-    final Database database = await getDataBase();
-    await database.delete(_tableName);
   }
 }
