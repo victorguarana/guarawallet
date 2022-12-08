@@ -14,14 +14,16 @@ class BankManager {
     try {
       final Database database = await getDataBase();
       Batch batch = database.batch();
-      bankTransaction.changePaid();
 
-      bankTransactionsRepository.paid(
-          batch, bankTransaction, accountsRepository);
+      BankTransaction bankTransactionClone = bankTransaction.clone();
+      bankTransactionClone.changePaid();
+
+      bankTransactionsRepository.switchAlreadyPaid(batch, bankTransactionClone);
       accountsRepository.payTransaction(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
+      bankTransaction.changePaid();
       bankTransactionsRepository.notify();
       accountsRepository.loadAll();
     } on DatabaseException catch (e) {
@@ -38,13 +40,14 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      bankTransactionsRepository.save(batch, bankTransaction);
-      accountsRepository.debitAccount(batch, bankTransaction.value,
+      bankTransactionsRepository.insertDB(batch, bankTransaction);
+      accountsRepository.debitAccountDB(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
-      // print(result);
-      bankTransactionsRepository.loadAll();
+      bankTransactionsRepository.addLocal(bankTransaction);
+      bankTransactionsRepository.notify();
+
       accountsRepository.loadAll();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
@@ -59,9 +62,10 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      accountsRepository.save(batch, account);
+      accountsRepository.insertDB(batch, account);
       await batch.commit(noResult: true);
 
+      accountsRepository.addLocal(account);
       accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
@@ -77,12 +81,13 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      accountsRepository.delete(batch, account);
-      bankTransactionsRepository.deleteAllFromAccount(batch, account.name);
+      accountsRepository.deleteDB(batch, account);
+      bankTransactionsRepository.deleteAllFromAccountDB(batch, account.name);
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.loadAll();
-      accountsRepository.loadAll();
+      accountsRepository.removeLocal(account);
+      accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }
@@ -97,13 +102,16 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      bankTransactionsRepository.delete(batch, bankTransaction);
-      accountsRepository.debitAccount(batch, bankTransaction.value * -1,
+      bankTransactionsRepository.deleteDB(batch, bankTransaction);
+      accountsRepository.debitAccountDB(batch, bankTransaction.value * -1,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
+      bankTransactionsRepository.removeLocal(bankTransaction);
       bankTransactionsRepository.notify();
-      accountsRepository.loadAll();
+      accountsRepository.debitAccountLocal(bankTransaction.value * -1,
+          bankTransaction.account, bankTransaction.alreadyPaid);
+      accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }

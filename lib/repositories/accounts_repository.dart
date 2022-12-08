@@ -24,15 +24,17 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void save(Batch batch, Account account) {
+  void insertDB(Batch batch, Account account) {
     batch.insert(_tableName, toMap(account));
+  }
 
+  void addLocal(Account account) {
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
     generalExpectedBalance += account.expectedBalance;
   }
 
-  void debitAccount(
+  void debitAccountDB(
       Batch batch, double value, String accountName, bool alreadyPaid) {
     if (alreadyPaid) {
       batch.rawUpdate(
@@ -43,10 +45,29 @@ class AccountsRepository extends ChangeNotifier {
     }
   }
 
-  void delete(Batch batch, Account account) {
-    batch.delete(_tableName, where: '$_id = ${account.id}');
+  // TODO: Add id to model and DB and change accountName for accountID?
+  // Or make account name primary key?
+  void debitAccountLocal(double value, String accountName, bool alreadyPaid) {
+    Account accounts =
+        allAccounts.where((account) => account.name == accountName).first;
 
+    accounts.expectedBalance += value;
+    generalExpectedBalance += value;
+
+    if (alreadyPaid) {
+      accounts.currentBalance += value;
+      generalCurrentBalance += value;
+    }
+  }
+
+  void deleteDB(Batch batch, Account account) {
+    batch.delete(_tableName, where: '$_id = ${account.id}');
+  }
+
+  void removeLocal(Account account) {
     allAccounts.remove(account);
+    generalCurrentBalance -= account.currentBalance;
+    generalExpectedBalance -= account.expectedBalance;
   }
 
   void payTransaction(

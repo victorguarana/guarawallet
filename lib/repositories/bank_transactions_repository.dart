@@ -30,25 +30,29 @@ class BankTransactionsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void save(Batch batch, BankTransaction bankTransaction) {
+  void insertDB(Batch batch, BankTransaction bankTransaction) {
     batch.insert(_tablename, toMap(bankTransaction));
+  }
 
+  void addLocal(BankTransaction bankTransaction) {
     allTransactions.add(bankTransaction);
   }
 
-  void paid(Batch batch, BankTransaction bankTransaction,
-      AccountsRepository accountsRepository) {
+  void switchAlreadyPaid(Batch batch, BankTransaction bankTransaction) {
+    //clear date
     batch.update(_tablename, toMap(bankTransaction),
         where: '$_id = ?', whereArgs: [bankTransaction.id]);
   }
 
-  void delete(Batch batch, BankTransaction bankTransaction) {
+  void deleteDB(Batch batch, BankTransaction bankTransaction) {
     batch.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+  }
 
+  void removeLocal(BankTransaction bankTransaction) {
     allTransactions.remove(bankTransaction);
   }
 
-  void deleteAllFromAccount(Batch batch, String accountName) {
+  void deleteAllFromAccountDB(Batch batch, String accountName) {
     batch.delete(_tablename, where: '$_account = \'$accountName\'');
   }
 
