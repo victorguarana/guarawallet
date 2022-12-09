@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
-import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -26,22 +25,23 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   List<BankTransaction> allTransactions = [];
 
-  void notify() {
-    notifyListeners();
-  }
-
   void insertDB(Batch batch, BankTransaction bankTransaction) {
     batch.insert(_tablename, toMap(bankTransaction));
   }
 
   void addLocal(BankTransaction bankTransaction) {
     allTransactions.add(bankTransaction);
+    notifyListeners();
   }
 
   void switchAlreadyPaid(Batch batch, BankTransaction bankTransaction) {
-    //clear date
     batch.update(_tablename, toMap(bankTransaction),
         where: '$_id = ?', whereArgs: [bankTransaction.id]);
+  }
+
+  void switchAlreadyPaidLocal(BankTransaction bankTransaction) {
+    bankTransaction.changePaid();
+    notifyListeners();
   }
 
   void deleteDB(Batch batch, BankTransaction bankTransaction) {
@@ -50,10 +50,17 @@ class BankTransactionsRepository extends ChangeNotifier {
 
   void removeLocal(BankTransaction bankTransaction) {
     allTransactions.remove(bankTransaction);
+    notifyListeners();
   }
 
   void deleteAllFromAccountDB(Batch batch, String accountName) {
     batch.delete(_tablename, where: '$_account = \'$accountName\'');
+  }
+
+  void deleteAllFromAccountLocal(String accountName) {
+    allTransactions
+        .removeWhere((transaction) => transaction.account == accountName);
+    notifyListeners();
   }
 
   Future<List<BankTransaction>> findAll() async {

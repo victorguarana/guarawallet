@@ -23,9 +23,9 @@ class BankManager {
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
-      bankTransaction.changePaid();
-      bankTransactionsRepository.notify();
-      accountsRepository.loadAll();
+      accountsRepository.payTransactionLocal(bankTransaction.value,
+          bankTransaction.account, bankTransaction.alreadyPaid);
+      bankTransactionsRepository.switchAlreadyPaidLocal(bankTransaction);
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }
@@ -46,9 +46,8 @@ class BankManager {
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.addLocal(bankTransaction);
-      bankTransactionsRepository.notify();
-
-      accountsRepository.loadAll();
+      accountsRepository.debitAccountLocal(bankTransaction.value,
+          bankTransaction.account, bankTransaction.alreadyPaid);
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }
@@ -66,7 +65,6 @@ class BankManager {
       await batch.commit(noResult: true);
 
       accountsRepository.addLocal(account);
-      accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }
@@ -85,9 +83,8 @@ class BankManager {
       bankTransactionsRepository.deleteAllFromAccountDB(batch, account.name);
       await batch.commit(noResult: true);
 
-      bankTransactionsRepository.loadAll();
+      bankTransactionsRepository.deleteAllFromAccountLocal(account.name);
       accountsRepository.removeLocal(account);
-      accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }
@@ -108,10 +105,8 @@ class BankManager {
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.removeLocal(bankTransaction);
-      bankTransactionsRepository.notify();
       accountsRepository.debitAccountLocal(bankTransaction.value * -1,
           bankTransaction.account, bankTransaction.alreadyPaid);
-      accountsRepository.notify();
     } on DatabaseException catch (e) {
       print('Erro no sqflite');
     }

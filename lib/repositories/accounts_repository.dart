@@ -20,10 +20,6 @@ class AccountsRepository extends ChangeNotifier {
   double generalCurrentBalance = 0;
   double generalExpectedBalance = 0;
 
-  void notify() {
-    notifyListeners();
-  }
-
   void insertDB(Batch batch, Account account) {
     batch.insert(_tableName, toMap(account));
   }
@@ -32,6 +28,8 @@ class AccountsRepository extends ChangeNotifier {
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
     generalExpectedBalance += account.expectedBalance;
+
+    notifyListeners();
   }
 
   void debitAccountDB(
@@ -58,6 +56,8 @@ class AccountsRepository extends ChangeNotifier {
       accounts.currentBalance += value;
       generalCurrentBalance += value;
     }
+
+    notifyListeners();
   }
 
   void deleteDB(Batch batch, Account account) {
@@ -68,6 +68,8 @@ class AccountsRepository extends ChangeNotifier {
     allAccounts.remove(account);
     generalCurrentBalance -= account.currentBalance;
     generalExpectedBalance -= account.expectedBalance;
+
+    notifyListeners();
   }
 
   void payTransaction(
@@ -77,6 +79,20 @@ class AccountsRepository extends ChangeNotifier {
     }
     batch.rawUpdate(
         'UPDATE ${AccountsRepository._tableName} SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
+  }
+
+  void payTransactionLocal(double value, String accountName, bool alreadyPaid) {
+    Account account =
+        allAccounts.where((account) => account.name == accountName).first;
+
+    if (!alreadyPaid) {
+      value = value * -1;
+    }
+
+    account.currentBalance += value;
+    generalCurrentBalance += value;
+
+    notifyListeners();
   }
 
   Future<List<Account>> findAll() async {
