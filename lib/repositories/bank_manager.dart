@@ -1,3 +1,4 @@
+import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
@@ -19,7 +20,7 @@ class BankManager {
       bankTransactionClone.changePaid();
 
       bankTransactionsRepository.switchAlreadyPaid(batch, bankTransactionClone);
-      accountsRepository.payTransaction(batch, bankTransaction.value,
+      AccountDAO.payTransaction(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
@@ -41,7 +42,7 @@ class BankManager {
       Batch batch = database.batch();
 
       bankTransactionsRepository.insertDB(batch, bankTransaction);
-      accountsRepository.debitAccountDB(batch, bankTransaction.value,
+      AccountDAO.debitAccount(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 
@@ -63,7 +64,7 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      accountsRepository.insertDB(batch, account);
+      AccountDAO.insert(batch, account);
       await batch.commit(noResult: true);
 
       accountsRepository.addLocal(account);
@@ -82,7 +83,7 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      accountsRepository.deleteDB(batch, account);
+      AccountDAO.delete(batch, account);
       bankTransactionsRepository.deleteAllFromAccountDB(batch, account.name);
       await batch.commit(noResult: true);
 
@@ -104,7 +105,7 @@ class BankManager {
       Batch batch = database.batch();
 
       bankTransactionsRepository.deleteDB(batch, bankTransaction);
-      accountsRepository.debitAccountDB(batch, bankTransaction.value * -1,
+      AccountDAO.debitAccount(batch, bankTransaction.value * -1,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
 

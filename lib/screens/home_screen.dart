@@ -4,7 +4,7 @@ import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/transactions_section.dart';
-import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
             label: 'Limpar Contas (Sem refresh)',
             child: const Icon(Icons.clear_all),
             onTap: () {
-              AccountsRepository().deleteAll();
+              AccountDAO.deleteAll();
             },
           ),
         ],
