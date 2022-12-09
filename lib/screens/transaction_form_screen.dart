@@ -204,7 +204,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                           : double.parse(
                               Util.formatDoubleToParse(valueController.text)),
                       account: _selectedAccount!.name,
-                      createdWhen: DateTime.now(),
                     );
                     BankManager().createTransaction(bankTransaction,
                         bankTransactionsRepository, accountsRepository);

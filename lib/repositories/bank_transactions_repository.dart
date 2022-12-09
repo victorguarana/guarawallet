@@ -10,7 +10,6 @@ class BankTransactionsRepository extends ChangeNotifier {
         $_name TEXT NOT NULL,
         $_value REAL NOT NULL,
         $_account TEXT NOT NULL,
-        $_createdWhen DATE NOT NULL,
         $_payDay DATE,
         $_alreadyPaid BOOLEAN NOT NULL)''';
   static const String _tablename = 'transactionTable';
@@ -19,7 +18,6 @@ class BankTransactionsRepository extends ChangeNotifier {
   static const String _name = 'name';
   static const String _value = 'value';
   static const String _account = 'account';
-  static const String _createdWhen = 'created_when';
   static const String _payDay = 'pay_day';
   static const String _alreadyPaid = 'already_paid';
 
@@ -100,7 +98,6 @@ class BankTransactionsRepository extends ChangeNotifier {
         name: transactionMap[_name],
         value: transactionMap[_value],
         account: transactionMap[_account],
-        createdWhen: DateTime.parse(transactionMap[_createdWhen]),
         payDay: transactionMap[_payDay] == null
             ? null
             : DateTime.parse(transactionMap[_payDay]),
@@ -118,7 +115,6 @@ class BankTransactionsRepository extends ChangeNotifier {
     map[_name] = bankTransaction.name;
     map[_value] = bankTransaction.value;
     map[_account] = bankTransaction.account;
-    map[_createdWhen] = Util.formatToDate(bankTransaction.createdWhen!);
     map[_payDay] = bankTransaction.payDay == null
         ? null
         : Util.formatToDate(bankTransaction.payDay!);

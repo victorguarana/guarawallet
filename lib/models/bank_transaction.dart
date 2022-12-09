@@ -5,23 +5,17 @@ class BankTransaction {
   String name;
   double value;
   String account;
-  DateTime? createdWhen;
   DateTime? payDay;
   bool alreadyPaid;
 
   BankTransaction({
     this.id,
-    this.createdWhen,
     this.payDay,
     required this.alreadyPaid,
     required this.name,
     required this.value,
     required this.account,
   });
-
-  String createdWhenFormatted() {
-    return Util.formatShow(createdWhen!);
-  }
 
   String payDayFormatted() {
     if (payDay != null) {
@@ -42,7 +36,6 @@ class BankTransaction {
   BankTransaction clone() {
     return BankTransaction(
         id: id,
-        createdWhen: createdWhen,
         payDay: payDay,
         alreadyPaid: alreadyPaid,
         name: name,
