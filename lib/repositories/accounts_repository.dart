@@ -74,7 +74,7 @@ class AccountsRepository extends ChangeNotifier {
 
   void payTransaction(
       Batch batch, double value, String accountName, bool alreadyPaid) {
-    if (!alreadyPaid) {
+    if (alreadyPaid) {
       value = value * -1;
     }
     batch.rawUpdate(
@@ -85,7 +85,7 @@ class AccountsRepository extends ChangeNotifier {
     Account account =
         allAccounts.where((account) => account.name == accountName).first;
 
-    if (!alreadyPaid) {
+    if (alreadyPaid) {
       value = value * -1;
     }
 
