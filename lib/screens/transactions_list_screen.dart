@@ -4,20 +4,19 @@ import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsScreen extends StatefulWidget {
-  const TransactionsScreen({super.key});
+class TransactionsListScreen extends StatefulWidget {
+  const TransactionsListScreen({super.key});
 
   @override
-  State<TransactionsScreen> createState() => _TransactionsScreenState();
+  State<TransactionsListScreen> createState() => _TransactionsListScreenState();
 }
 
-class _TransactionsScreenState extends State<TransactionsScreen> {
-  // TODO: Check if exists a better way to get accounts repository outside this class
-  // (Maybe inside other repositories?)
+class _TransactionsListScreenState extends State<TransactionsListScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
@@ -124,16 +123,8 @@ class _AccountItem extends StatelessWidget {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          // TODO: move this logic to model
-          bankTransaction.alreadyPaid = !bankTransaction.alreadyPaid;
-          if (bankTransaction.alreadyPaid) {
-            bankTransaction.payDay = DateTime.now();
-          } else {
-            bankTransaction.payDay = null;
-          }
-
-          bankTransactionsRepository.paid(bankTransaction, accountsRepository,
-              !bankTransaction.alreadyPaid);
+          BankManager().switchAlreadyPaid(
+              bankTransaction, bankTransactionsRepository, accountsRepository);
           return false;
         }
 
@@ -145,12 +136,14 @@ class _AccountItem extends StatelessWidget {
             }),
           );
         }
+        return false;
       },
       onDismissed: (direction) {
         if (direction != DismissDirection.endToStart) {
           return;
         }
-        bankTransactionsRepository.delete(bankTransaction, accountsRepository);
+        BankManager().deleteTransaction(
+            bankTransaction, bankTransactionsRepository, accountsRepository);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Theme.of(context).secondaryHeaderColor,

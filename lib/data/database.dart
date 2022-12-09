@@ -13,16 +13,16 @@ Future<Database> getDataBase() async {
     },
     // TODO: Remove onUpgrade and onDowngrade before build apk
     onUpgrade: (db, oldVersion, newVersion) {
-      _ResetDB(db);
+      _resetDB(db);
     },
     onDowngrade: (db, oldVersion, newVersion) {
-      _ResetDB(db);
+      _resetDB(db);
     },
-    version: 2,
+    version: 1,
   );
 }
 
-void _ResetDB(Database db) {
+void _resetDB(Database db) {
   db.execute('DROP TABLE accountTable');
   db.execute('DROP TABLE transactionTable');
   db.execute(BankTransactionsRepository.tableSQL);

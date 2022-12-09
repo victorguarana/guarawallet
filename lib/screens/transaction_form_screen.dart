@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
@@ -192,21 +193,20 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    bankTransactionsRepository.save(
-                        BankTransaction(
-                          payDay: _payDay,
-                          alreadyPaid: _alreadyPaid,
-                          name: nameController.text,
-                          value: widget.isDebit
-                              ? double.parse(Util.formatDoubleToParse(
-                                      valueController.text)) *
-                                  -1
-                              : double.parse(Util.formatDoubleToParse(
-                                  valueController.text)),
-                          account: _selectedAccount!.name,
-                          createdWhen: DateTime.now(),
-                        ),
-                        accountsRepository);
+                    BankTransaction bankTransaction = BankTransaction(
+                      payDay: _payDay,
+                      alreadyPaid: _alreadyPaid,
+                      name: nameController.text,
+                      value: widget.isDebit
+                          ? double.parse(Util.formatDoubleToParse(
+                                  valueController.text)) *
+                              -1
+                          : double.parse(
+                              Util.formatDoubleToParse(valueController.text)),
+                      account: _selectedAccount!.name,
+                    );
+                    BankManager().createTransaction(bankTransaction,
+                        bankTransactionsRepository, accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Criando uma nova Transação'),

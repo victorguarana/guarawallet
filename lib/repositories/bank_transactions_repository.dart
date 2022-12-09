@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
-import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -11,7 +10,6 @@ class BankTransactionsRepository extends ChangeNotifier {
         $_name TEXT NOT NULL,
         $_value REAL NOT NULL,
         $_account TEXT NOT NULL,
-        $_createdWhen DATE NOT NULL,
         $_payDay DATE,
         $_alreadyPaid BOOLEAN NOT NULL)''';
   static const String _tablename = 'transactionTable';
@@ -20,48 +18,47 @@ class BankTransactionsRepository extends ChangeNotifier {
   static const String _name = 'name';
   static const String _value = 'value';
   static const String _account = 'account';
-  static const String _createdWhen = 'created_when';
   static const String _payDay = 'pay_day';
   static const String _alreadyPaid = 'already_paid';
 
   List<BankTransaction> allTransactions = [];
 
-  save(BankTransaction bankTransaction,
-      AccountsRepository accountsRepository) async {
-    final Database database = await getDataBase();
+  void insertDB(Batch batch, BankTransaction bankTransaction) {
+    batch.insert(_tablename, toMap(bankTransaction));
+  }
 
-    // TODO: Move this logic to other class?
-    await database.transaction((txn) async {
-      await txn.insert(_tablename, toMap(bankTransaction),
-          conflictAlgorithm: ConflictAlgorithm.rollback);
-      await accountsRepository.debitAccount(txn, bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
-    });
-
+  void addLocal(BankTransaction bankTransaction) {
     allTransactions.add(bankTransaction);
     notifyListeners();
   }
 
-  paid(BankTransaction bankTransaction, AccountsRepository accountsRepository,
-      bool alreadyPaid) async {
-    final Database database = await getDataBase();
+  void switchAlreadyPaid(Batch batch, BankTransaction bankTransaction) {
+    batch.update(_tablename, toMap(bankTransaction),
+        where: '$_id = ?', whereArgs: [bankTransaction.id]);
+  }
 
-    // TODO: Move this logic to other class?
-    await database.transaction((txn) async {
-      await txn.update(_tablename, toMap(bankTransaction),
-          where: '$_id = ?',
-          whereArgs: [bankTransaction.id],
-          conflictAlgorithm: ConflictAlgorithm.rollback);
-      if (bankTransaction.alreadyPaid) {
-        await accountsRepository.payTransaction(
-            txn, bankTransaction.value, bankTransaction.account);
-      } else {
-        await accountsRepository.payTransaction(
-            txn, bankTransaction.value * -1, bankTransaction.account);
-      }
+  void switchAlreadyPaidLocal(BankTransaction bankTransaction) {
+    bankTransaction.changePaid();
+    notifyListeners();
+  }
 
-      notifyListeners();
-    });
+  void deleteDB(Batch batch, BankTransaction bankTransaction) {
+    batch.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+  }
+
+  void removeLocal(BankTransaction bankTransaction) {
+    allTransactions.remove(bankTransaction);
+    notifyListeners();
+  }
+
+  void deleteAllFromAccountDB(Batch batch, String accountName) {
+    batch.delete(_tablename, where: '$_account = \'$accountName\'');
+  }
+
+  void deleteAllFromAccountLocal(String accountName) {
+    allTransactions
+        .removeWhere((transaction) => transaction.account == accountName);
+    notifyListeners();
   }
 
   Future<List<BankTransaction>> findAll() async {
@@ -87,7 +84,11 @@ class BankTransactionsRepository extends ChangeNotifier {
     return toList(result);
   }
 
-  // TODO: Move this method to model?
+  Future<void> deleteAll() async {
+    final Database database = await getDataBase();
+    await database.delete(_tablename);
+  }
+
   List<BankTransaction> toList(List<Map<String, dynamic>> transactionMaps) {
     final List<BankTransaction> bankTransactions = [];
 
@@ -97,11 +98,10 @@ class BankTransactionsRepository extends ChangeNotifier {
         name: transactionMap[_name],
         value: transactionMap[_value],
         account: transactionMap[_account],
-        createdWhen: DateTime.parse(transactionMap[_createdWhen]),
         payDay: transactionMap[_payDay] == null
             ? null
             : DateTime.parse(transactionMap[_payDay]),
-        alreadyPaid: transactionMap[_alreadyPaid] != 0,
+        alreadyPaid: Util.stringToBool(transactionMap[_alreadyPaid]),
       );
       bankTransactions.add(bankTransaction);
     }
@@ -109,42 +109,16 @@ class BankTransactionsRepository extends ChangeNotifier {
     return bankTransactions;
   }
 
-  // TODO: Move this method to model?
   Map<String, dynamic> toMap(BankTransaction bankTransaction) {
     final Map<String, dynamic> map = {};
     map[_id] = bankTransaction.id;
     map[_name] = bankTransaction.name;
     map[_value] = bankTransaction.value;
     map[_account] = bankTransaction.account;
-    map[_createdWhen] = Util.formatToDate(bankTransaction.createdWhen!);
     map[_payDay] = bankTransaction.payDay == null
         ? null
         : Util.formatToDate(bankTransaction.payDay!);
     map[_alreadyPaid] = bankTransaction.alreadyPaid.toString();
     return map;
-  }
-
-  deleteAll() async {
-    final Database database = await getDataBase();
-    await database.delete(_tablename);
-  }
-
-  Future<void> deleteAllAccount(Transaction txn, String accountName) async {
-    await txn.delete(_tablename, where: '$_account = \'$accountName\'');
-
-    loadAll();
-  }
-
-  delete(BankTransaction bankTransaction,
-      AccountsRepository accountsRepository) async {
-    final Database database = await getDataBase();
-    await database.transaction((txn) async {
-      await txn.delete(_tablename, where: '$_id = ${bankTransaction.id}');
-      await accountsRepository.debitAccount(txn, (bankTransaction.value * -1),
-          bankTransaction.account, bankTransaction.alreadyPaid);
-    });
-
-    allTransactions.remove(bankTransaction);
-    notifyListeners();
   }
 }

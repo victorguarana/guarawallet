@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
+import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
@@ -84,13 +85,14 @@ class AccountFormScreenState extends State<AccountFormScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    accountsRepository.save(Account(
+                    Account account = Account(
                       name: nameController.text,
                       currentBalance: double.parse(Util.formatDoubleToParse(
                           currentBalanceController.text)),
                       expectedBalance: double.parse(Util.formatDoubleToParse(
                           currentBalanceController.text)),
-                    ));
+                    );
+                    BankManager().createAccount(account, accountsRepository);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Criando uma nova Conta'),
