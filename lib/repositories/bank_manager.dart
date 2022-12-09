@@ -1,4 +1,5 @@
 import 'package:guarawallet/data/account_dao.dart';
+import 'package:guarawallet/data/bank_transaction_dao.dart';
 import 'package:guarawallet/data/database.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
@@ -19,7 +20,7 @@ class BankManager {
       BankTransaction bankTransactionClone = bankTransaction.clone();
       bankTransactionClone.changePaid();
 
-      bankTransactionsRepository.switchAlreadyPaid(batch, bankTransactionClone);
+      BankTransactionDAO.switchAlreadyPaid(batch, bankTransactionClone);
       AccountDAO.payTransaction(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
@@ -41,7 +42,7 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      bankTransactionsRepository.insertDB(batch, bankTransaction);
+      BankTransactionDAO.insert(batch, bankTransaction);
       AccountDAO.debitAccount(batch, bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
@@ -84,7 +85,7 @@ class BankManager {
       Batch batch = database.batch();
 
       AccountDAO.delete(batch, account);
-      bankTransactionsRepository.deleteAllFromAccountDB(batch, account.name);
+      BankTransactionDAO.deleteAllFromAccount(batch, account.name);
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.deleteAllFromAccountLocal(account.name);
@@ -104,7 +105,7 @@ class BankManager {
       final Database database = await getDataBase();
       Batch batch = database.batch();
 
-      bankTransactionsRepository.deleteDB(batch, bankTransaction);
+      BankTransactionDAO.delete(batch, bankTransaction);
       AccountDAO.debitAccount(batch, bankTransaction.value * -1,
           bankTransaction.account, bankTransaction.alreadyPaid);
       await batch.commit(noResult: true);
