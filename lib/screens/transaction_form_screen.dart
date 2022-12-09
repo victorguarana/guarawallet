@@ -4,6 +4,7 @@ import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
+import 'package:guarawallet/themes/theme_colors.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,22 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       setState(() {
         _accountsList.add(accountItem);
       });
+    }
+  }
+
+  void _renderResult(bool success) {
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transação criada com sucesso!')),
+      );
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Erro ao salvar Transação'),
+          backgroundColor: ThemeColors.scaffoldMessengerColor,
+        ),
+      );
     }
   }
 
@@ -191,7 +208,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     BankTransaction bankTransaction = BankTransaction(
                       payDay: _payDay,
@@ -205,14 +222,13 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               Util.formatDoubleToParse(valueController.text)),
                       account: _selectedAccount!.name,
                     );
-                    BankManager().createTransaction(bankTransaction,
-                        bankTransactionsRepository, accountsRepository);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Criando uma nova Transação'),
-                      ),
-                    );
-                    Navigator.pop(context);
+
+                    bool success = await BankManager.createTransaction(
+                        bankTransaction,
+                        bankTransactionsRepository,
+                        accountsRepository);
+
+                    _renderResult(success);
                   }
                 },
                 child: const Text('Adicionar!'),

@@ -6,7 +6,7 @@ import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class BankManager {
-  void switchAlreadyPaid(
+  static void switchAlreadyPaid(
     BankTransaction bankTransaction,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
@@ -26,12 +26,12 @@ class BankManager {
       accountsRepository.payTransactionLocal(bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
       bankTransactionsRepository.switchAlreadyPaidLocal(bankTransaction);
-    } on DatabaseException catch (e) {
-      print('Erro no sqflite');
+    } on DatabaseException {
+      return;
     }
   }
 
-  void createTransaction(
+  static Future<bool> createTransaction(
     BankTransaction bankTransaction,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
@@ -48,12 +48,14 @@ class BankManager {
       bankTransactionsRepository.addLocal(bankTransaction);
       accountsRepository.debitAccountLocal(bankTransaction.value,
           bankTransaction.account, bankTransaction.alreadyPaid);
-    } on DatabaseException catch (e) {
-      print('Erro no sqflite');
+
+      return true;
+    } on DatabaseException {
+      return false;
     }
   }
 
-  void createAccount(
+  static Future<bool> createAccount(
     Account account,
     AccountsRepository accountsRepository,
   ) async {
@@ -65,12 +67,13 @@ class BankManager {
       await batch.commit(noResult: true);
 
       accountsRepository.addLocal(account);
-    } on DatabaseException catch (e) {
-      print('Erro no sqflite');
+      return true;
+    } on DatabaseException {
+      return false;
     }
   }
 
-  void deleteAccount(
+  static Future<bool> deleteAccount(
     Account account,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
@@ -85,12 +88,13 @@ class BankManager {
 
       bankTransactionsRepository.deleteAllFromAccountLocal(account.name);
       accountsRepository.removeLocal(account);
-    } on DatabaseException catch (e) {
-      print('Erro no sqflite');
+      return true;
+    } on DatabaseException {
+      return false;
     }
   }
 
-  void deleteTransaction(
+  static Future<bool> deleteTransaction(
     BankTransaction bankTransaction,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
@@ -107,8 +111,9 @@ class BankManager {
       bankTransactionsRepository.removeLocal(bankTransaction);
       accountsRepository.debitAccountLocal(bankTransaction.value * -1,
           bankTransaction.account, bankTransaction.alreadyPaid);
-    } on DatabaseException catch (e) {
-      print('Erro no sqflite');
+      return true;
+    } on DatabaseException {
+      return false;
     }
   }
 }

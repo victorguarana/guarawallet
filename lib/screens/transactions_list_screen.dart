@@ -7,6 +7,7 @@ import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
+import 'package:guarawallet/themes/theme_colors.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsListScreen extends StatefulWidget {
@@ -19,6 +20,24 @@ class TransactionsListScreen extends StatefulWidget {
 class _TransactionsListScreenState extends State<TransactionsListScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
+
+  void _showResult(bool result, String accountName) {
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).secondaryHeaderColor,
+          content: Text('Conta \'$accountName\' foi deletada!'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao deletar conta \'$accountName\'.'),
+          backgroundColor: ThemeColors.scaffoldMessengerColor,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +108,8 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
   }
 }
 
-class _AccountItem extends StatelessWidget {
+class _AccountItem extends StatefulWidget {
+  // const _AccountItem({super.key});
   final BankTransaction bankTransaction;
   final BankTransactionsRepository bankTransactionsRepository;
   final AccountsRepository accountsRepository;
@@ -98,6 +118,28 @@ class _AccountItem extends StatelessWidget {
       {required this.bankTransaction,
       required this.bankTransactionsRepository,
       required this.accountsRepository});
+  @override
+  State<_AccountItem> createState() => __AccountItemState();
+}
+
+class __AccountItemState extends State<_AccountItem> {
+  void _showResult(bool result, String accountName) {
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).secondaryHeaderColor,
+          content: Text('Conta \'$accountName\' foi deletada!'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao deletar conta \'$accountName\'.'),
+          backgroundColor: ThemeColors.scaffoldMessengerColor,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +147,11 @@ class _AccountItem extends StatelessWidget {
       key: UniqueKey(),
       background: Container(
         alignment: Alignment.centerLeft,
-        color: bankTransaction.alreadyPaid ? Colors.orange : Colors.green,
+        color:
+            widget.bankTransaction.alreadyPaid ? Colors.orange : Colors.green,
         child: Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: bankTransaction.alreadyPaid
+          child: widget.bankTransaction.alreadyPaid
               ? const Icon(Icons.money_off, color: Colors.white)
               : const Icon(Icons.attach_money, color: Colors.white),
         ),
@@ -123,8 +166,8 @@ class _AccountItem extends StatelessWidget {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          BankManager().switchAlreadyPaid(
-              bankTransaction, bankTransactionsRepository, accountsRepository);
+          BankManager.switchAlreadyPaid(widget.bankTransaction,
+              widget.bankTransactionsRepository, widget.accountsRepository);
           return false;
         }
 
@@ -138,23 +181,16 @@ class _AccountItem extends StatelessWidget {
         }
         return false;
       },
-      onDismissed: (direction) {
+      onDismissed: (direction) async {
         if (direction != DismissDirection.endToStart) {
           return;
         }
-        BankManager().deleteTransaction(
-            bankTransaction, bankTransactionsRepository, accountsRepository);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Theme.of(context).secondaryHeaderColor,
-            content:
-                Text('Transação \'${bankTransaction.name}\' foi deletada!'),
-          ),
-        );
+        await BankManager.deleteTransaction(widget.bankTransaction,
+            widget.bankTransactionsRepository, widget.accountsRepository);
       },
       child: Column(children: [
         const ListCardDivider(),
-        TransactionWidget(transaction: bankTransaction),
+        TransactionWidget(transaction: widget.bankTransaction),
         const ListCardDivider()
       ]),
     );

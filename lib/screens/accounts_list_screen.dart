@@ -6,6 +6,7 @@ import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
+import 'package:guarawallet/themes/theme_colors.dart';
 import 'package:provider/provider.dart';
 
 class AccountsListScreen extends StatefulWidget {
@@ -18,6 +19,24 @@ class AccountsListScreen extends StatefulWidget {
 class _AccountsListScreenState extends State<AccountsListScreen> {
   late AccountsRepository accountsRepository;
   late BankTransactionsRepository bankTransactionsRepository;
+
+  void _showResult(bool result, String accountName) {
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).secondaryHeaderColor,
+          content: Text('Conta \'$accountName\' foi deletada!'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao deletar conta \'$accountName\'.'),
+          backgroundColor: ThemeColors.scaffoldMessengerColor,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,18 +99,11 @@ class _AccountsListScreenState extends State<AccountsListScreen> {
                         }),
                       );
                     },
-                    onDismissed: (direction) {
-                      BankManager().deleteAccount(account,
+                    onDismissed: (direction) async {
+                      bool result = await BankManager.deleteAccount(account,
                           bankTransactionsRepository, accountsRepository);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor:
-                              Theme.of(context).secondaryHeaderColor,
-                          content:
-                              Text('Conta \'${account.name}\' foi deletada!'),
-                        ),
-                      );
+                      _showResult(result, account.name);
                     },
                     child: Column(
                       children: [
