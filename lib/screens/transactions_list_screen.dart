@@ -9,14 +9,14 @@ import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:guarawallet/screens/transaction_form_screen.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsScreen extends StatefulWidget {
-  const TransactionsScreen({super.key});
+class TransactionsListScreen extends StatefulWidget {
+  const TransactionsListScreen({super.key});
 
   @override
-  State<TransactionsScreen> createState() => _TransactionsScreenState();
+  State<TransactionsListScreen> createState() => _TransactionsListScreenState();
 }
 
-class _TransactionsScreenState extends State<TransactionsScreen> {
+class _TransactionsListScreenState extends State<TransactionsListScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 

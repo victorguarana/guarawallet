@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/components/account_widget.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
-import 'package:guarawallet/screens/accounts_screen.dart';
+import 'package:guarawallet/screens/accounts_list_screen.dart';
 import 'package:provider/provider.dart';
 
 class AccountsSection extends StatelessWidget {

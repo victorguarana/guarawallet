@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/components/list_card.dart';
 import 'package:guarawallet/components/transaction_widget.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
-import 'package:guarawallet/screens/transactions_screen.dart';
+import 'package:guarawallet/screens/transactions_list_screen.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsSection extends StatelessWidget {
@@ -14,8 +14,8 @@ class TransactionsSection extends StatelessWidget {
     return ListCard(
       cardTitle: 'Transações',
       cardHeight: 305,
-      listScreenRouter: () =>
-          MaterialPageRoute(builder: (context) => const TransactionsScreen()),
+      listScreenRouter: () => MaterialPageRoute(
+          builder: (context) => const TransactionsListScreen()),
       cardContent: FutureBuilder(
         future: Provider.of<BankTransactionsRepository>(context, listen: false)
             .loadAll(),
