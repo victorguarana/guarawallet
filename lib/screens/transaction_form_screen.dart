@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/models/account.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
@@ -39,7 +40,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   }
 
   void _loadAccounts() async {
-    List<Account> accounts = await AccountsRepository().findAll();
+    List<Account> accounts = await AccountDAO.findAll();
     for (Account account in accounts) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
         value: account,
