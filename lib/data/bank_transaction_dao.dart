@@ -47,13 +47,6 @@ class BankTransactionDAO {
     return toList(result);
   }
 
-  // static Future<List<BankTransaction>> find(int id) async {
-  //   final Database database = await getDataBase();
-  //   final List<Map<String, dynamic>> result =
-  //       await database.query(_tablename, where: '$_id = ?', whereArgs: [id]);
-  //   return toList(result);
-  // }
-
   static Future<void> deleteAll() async {
     final Database database = await getDataBase();
     await database.delete(_tablename);

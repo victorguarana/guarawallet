@@ -50,13 +50,6 @@ class AccountDAO {
         'UPDATE $_tableName SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
   }
 
-  // Future<List<Account>> find(int id) async {
-  //   final Database database = await getDataBase();
-  //   final List<Map<String, dynamic>> result =
-  //       await database.query(_tableName, where: '$_id = ?', whereArgs: [id]);
-  //   return toList(result);
-  // }
-
   // TODO: Remove this after build
   static Future<void> deleteAll() async {
     final Database database = await getDataBase();
