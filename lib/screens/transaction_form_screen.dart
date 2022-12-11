@@ -226,6 +226,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
                     bool success = await BankManager.createTransaction(
                         bankTransaction,
+                        _selectedAccount!,
                         bankTransactionsRepository,
                         accountsRepository);
 

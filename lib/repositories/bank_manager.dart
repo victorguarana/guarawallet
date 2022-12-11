@@ -35,24 +35,27 @@ class BankManager {
 
   static Future<bool> createTransaction(
     BankTransaction bankTransaction,
+    Account account,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
     try {
       final Database database = await getDataBase();
       Batch batch = database.batch();
+      account.movement(bankTransaction.value, bankTransaction.alreadyPaid);
 
       BankTransactionDAO.insert(batch, bankTransaction);
-      AccountDAO.debitAccount(batch, bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
+      AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.addLocal(bankTransaction);
-      accountsRepository.debitAccountLocal(bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
+      accountsRepository.updateGeneral(
+          bankTransaction.value, bankTransaction.alreadyPaid);
 
       return true;
     } on DatabaseException {
+      account.movement(bankTransaction.value * -1, bankTransaction.alreadyPaid);
+
       return false;
     }
   }
@@ -111,8 +114,8 @@ class BankManager {
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.removeLocal(bankTransaction);
-      accountsRepository.debitAccountLocal(bankTransaction.value * -1,
-          bankTransaction.account, bankTransaction.alreadyPaid);
+      accountsRepository.updateGeneral(
+          bankTransaction.value * -1, bankTransaction.alreadyPaid);
       return true;
     } on DatabaseException {
       return false;

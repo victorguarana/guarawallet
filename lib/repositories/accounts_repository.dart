@@ -15,17 +15,10 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: Add id to model and DB and change accountName for accountID?
-  // Or make account name primary key?
-  void debitAccountLocal(double value, String accountName, bool alreadyPaid) {
-    Account accounts =
-        allAccounts.where((account) => account.name == accountName).first;
-
-    accounts.expectedBalance += value;
+  void updateGeneral(double value, bool alreadyPaid) {
     generalExpectedBalance += value;
 
     if (alreadyPaid) {
-      accounts.currentBalance += value;
       generalCurrentBalance += value;
     }
 

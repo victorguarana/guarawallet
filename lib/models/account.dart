@@ -10,4 +10,11 @@ class Account {
     required this.currentBalance,
     required this.expectedBalance,
   });
+
+  void movement(double value, bool alreadyPaid) {
+    expectedBalance += value;
+    if (alreadyPaid) {
+      currentBalance += value;
+    }
+  }
 }

@@ -19,6 +19,11 @@ class AccountDAO {
     batch.insert(_tableName, toMap(account));
   }
 
+  static void update(Batch batch, Account account) {
+    batch.update(_tableName, toMap(account),
+        where: '$_id = ?', whereArgs: [account.id]);
+  }
+
   static Future<List<Account>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tableName);
@@ -43,6 +48,7 @@ class AccountDAO {
 
   static void payTransaction(
       Batch batch, double value, String accountName, bool alreadyPaid) {
+    // TODO: move this logic to model
     if (alreadyPaid) {
       value = value * -1;
     }
