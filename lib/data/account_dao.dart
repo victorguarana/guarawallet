@@ -34,16 +34,6 @@ class AccountDAO {
     batch.delete(_tableName, where: '$_id = ${account.id}');
   }
 
-  static void payTransaction(
-      Batch batch, double value, String accountName, bool alreadyPaid) {
-    // TODO: move this logic to model
-    if (alreadyPaid) {
-      value = value * -1;
-    }
-    batch.rawUpdate(
-        'UPDATE $_tableName SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
-  }
-
   // TODO: Remove this after build
   static Future<void> deleteAll() async {
     final Database database = await getDataBase();

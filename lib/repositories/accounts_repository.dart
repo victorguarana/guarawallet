@@ -19,7 +19,7 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateGeneral(double value, bool alreadyPaid) {
+  void updateAllGeneral(double value, bool alreadyPaid) {
     generalExpectedBalance += value;
 
     if (alreadyPaid) {
@@ -29,24 +29,19 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeLocal(Account account) {
-    allAccounts.remove(account);
-    generalCurrentBalance -= account.currentBalance;
-    generalExpectedBalance -= account.expectedBalance;
+  void updateCurrent(double value, bool alreadyPaid) {
+    if (alreadyPaid) {
+      value = value * -1;
+    }
+    generalCurrentBalance += value;
 
     notifyListeners();
   }
 
-  void payTransactionLocal(double value, String accountName, bool alreadyPaid) {
-    Account account =
-        allAccounts.singleWhere((account) => account.name == accountName);
-
-    if (alreadyPaid) {
-      value = value * -1;
-    }
-
-    account.currentBalance += value;
-    generalCurrentBalance += value;
+  void removeLocal(Account account) {
+    allAccounts.remove(account);
+    generalCurrentBalance -= account.currentBalance;
+    generalExpectedBalance -= account.expectedBalance;
 
     notifyListeners();
   }

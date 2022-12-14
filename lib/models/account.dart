@@ -17,4 +17,11 @@ class Account {
       currentBalance += value;
     }
   }
+
+  void payTransaction(double value, bool alreadyPaid) {
+    if (alreadyPaid) {
+      value = value * -1;
+    }
+    currentBalance += value;
+  }
 }

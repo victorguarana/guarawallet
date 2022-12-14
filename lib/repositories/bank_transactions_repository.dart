@@ -5,6 +5,10 @@ import 'package:guarawallet/models/bank_transaction.dart';
 class BankTransactionsRepository extends ChangeNotifier {
   List<BankTransaction> allTransactions = [];
 
+  void notify() {
+    notifyListeners();
+  }
+
   void addLocal(BankTransaction bankTransaction) {
     allTransactions.add(bankTransaction);
     notifyListeners();

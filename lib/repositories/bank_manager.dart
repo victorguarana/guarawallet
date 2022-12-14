@@ -13,22 +13,27 @@ class BankManager {
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
+    final Database database = await getDataBase();
+    Batch batch = database.batch();
+
+    Account account = accountsRepository.findByName(bankTransaction.account);
+    account.payTransaction(bankTransaction.value, bankTransaction.alreadyPaid);
+    DateTime? oldDate = bankTransaction.payDay;
+    bankTransaction.changePaid();
+
     try {
-      final Database database = await getDataBase();
-      Batch batch = database.batch();
-
-      BankTransaction bankTransactionClone = bankTransaction.clone();
-      bankTransactionClone.changePaid();
-
-      BankTransactionDAO.switchAlreadyPaid(batch, bankTransactionClone);
-      AccountDAO.payTransaction(batch, bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
+      BankTransactionDAO.update(batch, bankTransaction);
+      AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
 
-      accountsRepository.payTransactionLocal(bankTransaction.value,
-          bankTransaction.account, bankTransaction.alreadyPaid);
-      bankTransactionsRepository.switchAlreadyPaidLocal(bankTransaction);
+      bankTransactionsRepository.notify();
+      accountsRepository.updateCurrent(
+          bankTransaction.value, bankTransaction.alreadyPaid);
     } on DatabaseException {
+      account.payTransaction(
+          bankTransaction.value * -1, bankTransaction.alreadyPaid);
+      bankTransaction.changePaid();
+      bankTransaction.payDay = oldDate;
       return;
     }
   }
@@ -49,7 +54,7 @@ class BankManager {
       await batch.commit(noResult: true);
 
       bankTransactionsRepository.addLocal(bankTransaction);
-      accountsRepository.updateGeneral(
+      accountsRepository.updateAllGeneral(
           bankTransaction.value, bankTransaction.alreadyPaid);
 
       return true;
@@ -119,7 +124,7 @@ class BankManager {
     }
 
     bankTransactionsRepository.removeLocal(bankTransaction);
-    accountsRepository.updateGeneral(
+    accountsRepository.updateAllGeneral(
         bankTransaction.value * -1, bankTransaction.alreadyPaid);
     return true;
   }
