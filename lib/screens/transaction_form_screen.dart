@@ -21,7 +21,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
-  Account? _selectedAccount;
+  String? _selectedAccount;
   bool _alreadyPaid = true;
   DateTime? _payDay = DateTime.now();
 
@@ -43,7 +43,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     List<Account> accounts = await AccountDAO.findAll();
     for (Account account in accounts) {
       final DropdownMenuItem accountItem = DropdownMenuItem(
-        value: account,
+        value: account.name,
         child: Text(account.name),
       );
       setState(() {
@@ -221,12 +221,11 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               -1
                           : double.parse(
                               Util.formatDoubleToParse(valueController.text)),
-                      account: _selectedAccount!.name,
+                      account: _selectedAccount!,
                     );
 
                     bool success = await BankManager.createTransaction(
                         bankTransaction,
-                        _selectedAccount!,
                         bankTransactionsRepository,
                         accountsRepository);
 

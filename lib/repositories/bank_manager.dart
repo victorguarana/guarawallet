@@ -41,10 +41,10 @@ class BankManager {
 
   static Future<bool> createTransaction(
     BankTransaction bankTransaction,
-    Account account,
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
+    Account account = accountsRepository.findByName(bankTransaction.account);
     account.movement(bankTransaction.value, bankTransaction.alreadyPaid);
 
     try {
