@@ -7,6 +7,10 @@ class AccountsRepository extends ChangeNotifier {
   double generalCurrentBalance = 0;
   double generalExpectedBalance = 0;
 
+  Account findByName(String accountName) {
+    return allAccounts.singleWhere((account) => account.name == accountName);
+  }
+
   void addLocal(Account account) {
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
@@ -35,7 +39,7 @@ class AccountsRepository extends ChangeNotifier {
 
   void payTransactionLocal(double value, String accountName, bool alreadyPaid) {
     Account account =
-        allAccounts.where((account) => account.name == accountName).first;
+        allAccounts.singleWhere((account) => account.name == accountName);
 
     if (alreadyPaid) {
       value = value * -1;

@@ -91,7 +91,7 @@ class BankManager {
       BankTransactionDAO.deleteAllFromAccount(batch, account.name);
       await batch.commit(noResult: true);
 
-      bankTransactionsRepository.deleteAllFromAccountLocal(account.name);
+      bankTransactionsRepository.removeLocalByAccount(account.name);
       accountsRepository.removeLocal(account);
       return true;
     } on DatabaseException {
@@ -104,21 +104,23 @@ class BankManager {
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
+    final Database database = await getDataBase();
+    Batch batch = database.batch();
+    Account account = accountsRepository.findByName(bankTransaction.account);
+    account.movement(bankTransaction.value * -1, bankTransaction.alreadyPaid);
+
     try {
-      final Database database = await getDataBase();
-      Batch batch = database.batch();
-
       BankTransactionDAO.delete(batch, bankTransaction);
-      AccountDAO.debitAccount(batch, bankTransaction.value * -1,
-          bankTransaction.account, bankTransaction.alreadyPaid);
+      AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
-
-      bankTransactionsRepository.removeLocal(bankTransaction);
-      accountsRepository.updateGeneral(
-          bankTransaction.value * -1, bankTransaction.alreadyPaid);
-      return true;
     } on DatabaseException {
+      account.movement(bankTransaction.value, bankTransaction.alreadyPaid);
       return false;
     }
+
+    bankTransactionsRepository.removeLocal(bankTransaction);
+    accountsRepository.updateGeneral(
+        bankTransaction.value * -1, bankTransaction.alreadyPaid);
+    return true;
   }
 }

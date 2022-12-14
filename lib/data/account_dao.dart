@@ -30,18 +30,6 @@ class AccountDAO {
     return toList(result);
   }
 
-  static void debitAccount(
-      Batch batch, double value, String accountName, bool alreadyPaid) {
-    // TODO: move this logic to model
-    if (alreadyPaid) {
-      batch.rawUpdate(
-          'UPDATE $_tableName SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
-    } else {
-      batch.rawUpdate(
-          'UPDATE $_tableName SET $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
-    }
-  }
-
   static void delete(Batch batch, Account account) {
     batch.delete(_tableName, where: '$_id = ${account.id}');
   }

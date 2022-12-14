@@ -20,7 +20,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteAllFromAccountLocal(String accountName) {
+  void removeLocalByAccount(String accountName) {
     allTransactions
         .removeWhere((transaction) => transaction.account == accountName);
     notifyListeners();
