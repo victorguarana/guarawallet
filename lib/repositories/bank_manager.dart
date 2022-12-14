@@ -13,22 +13,19 @@ class BankManager {
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
-    final Database database = await getDataBase();
-    Batch batch = database.batch();
-
     Account account = accountsRepository.findByName(bankTransaction.account);
     account.payTransaction(bankTransaction.value, bankTransaction.alreadyPaid);
+
     DateTime? oldDate = bankTransaction.payDay;
     bankTransaction.changePaid();
 
     try {
+      final Database database = await getDataBase();
+      Batch batch = database.batch();
+
       BankTransactionDAO.update(batch, bankTransaction);
       AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
-
-      bankTransactionsRepository.notify();
-      accountsRepository.updateCurrent(
-          bankTransaction.value, bankTransaction.alreadyPaid);
     } on DatabaseException {
       account.payTransaction(
           bankTransaction.value * -1, bankTransaction.alreadyPaid);
@@ -36,6 +33,10 @@ class BankManager {
       bankTransaction.payDay = oldDate;
       return;
     }
+
+    bankTransactionsRepository.notify();
+    accountsRepository.updateCurrent(
+        bankTransaction.value, bankTransaction.alreadyPaid);
   }
 
   static Future<bool> createTransaction(
@@ -44,25 +45,26 @@ class BankManager {
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
+    account.movement(bankTransaction.value, bankTransaction.alreadyPaid);
+
     try {
       final Database database = await getDataBase();
       Batch batch = database.batch();
-      account.movement(bankTransaction.value, bankTransaction.alreadyPaid);
 
       BankTransactionDAO.insert(batch, bankTransaction);
       AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
-
-      bankTransactionsRepository.addLocal(bankTransaction);
-      accountsRepository.updateAllGeneral(
-          bankTransaction.value, bankTransaction.alreadyPaid);
-
-      return true;
     } on DatabaseException {
       account.movement(bankTransaction.value * -1, bankTransaction.alreadyPaid);
 
       return false;
     }
+
+    bankTransactionsRepository.addLocal(bankTransaction);
+    accountsRepository.updateAllGeneral(
+        bankTransaction.value, bankTransaction.alreadyPaid);
+
+    return true;
   }
 
   static Future<bool> createAccount(
@@ -75,12 +77,12 @@ class BankManager {
 
       AccountDAO.insert(batch, account);
       await batch.commit(noResult: true);
-
-      accountsRepository.addLocal(account);
-      return true;
     } on DatabaseException {
       return false;
     }
+
+    accountsRepository.addLocal(account);
+    return true;
   }
 
   static Future<bool> deleteAccount(
@@ -95,13 +97,13 @@ class BankManager {
       AccountDAO.delete(batch, account);
       BankTransactionDAO.deleteAllFromAccount(batch, account.name);
       await batch.commit(noResult: true);
-
-      bankTransactionsRepository.removeLocalByAccount(account.name);
-      accountsRepository.removeLocal(account);
-      return true;
     } on DatabaseException {
       return false;
     }
+
+    bankTransactionsRepository.removeLocalByAccount(account.name);
+    accountsRepository.removeLocal(account);
+    return true;
   }
 
   static Future<bool> deleteTransaction(
@@ -109,12 +111,13 @@ class BankManager {
     BankTransactionsRepository bankTransactionsRepository,
     AccountsRepository accountsRepository,
   ) async {
-    final Database database = await getDataBase();
-    Batch batch = database.batch();
     Account account = accountsRepository.findByName(bankTransaction.account);
     account.movement(bankTransaction.value * -1, bankTransaction.alreadyPaid);
 
     try {
+      final Database database = await getDataBase();
+      Batch batch = database.batch();
+
       BankTransactionDAO.delete(batch, bankTransaction);
       AccountDAO.update(batch, account);
       await batch.commit(noResult: true);
