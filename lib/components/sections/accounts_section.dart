@@ -18,7 +18,7 @@ class AccountsSection extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const AccountsListScreen()),
       cardContent: FutureBuilder(
         future:
-            Provider.of<AccountsRepository>(context, listen: false).loadAll(),
+            Provider.of<AccountsRepository>(context, listen: false).reloadAll(),
         builder: (context, snapshot) => snapshot.connectionState ==
                 ConnectionState.waiting
             ? const Center(child: CircularProgressIndicator())
