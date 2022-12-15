@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class AccountDAO {
   static const String tableSQL = '''CREATE TABLE $_tableName (
           $_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          $_name TEXT NOT NULL,
+          $_name TEXT UNIQUE NOT NULL,
           $_currentBalance REAL NOT NULL,
           $_expectedBalance REAL NOT NULL) ''';
   static const String _tableName = 'accountTable';

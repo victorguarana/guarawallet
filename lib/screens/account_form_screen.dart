@@ -46,6 +46,11 @@ class AccountFormScreenState extends State<AccountFormScreen> {
     return false;
   }
 
+  bool accountNameValidator(String? name) {
+    return accountsRepository.allAccounts
+        .any((account) => account.name.toLowerCase() == name!.toLowerCase());
+  }
+
   @override
   Widget build(BuildContext context) {
     accountsRepository = context.watch<AccountsRepository>();
@@ -66,6 +71,9 @@ class AccountFormScreenState extends State<AccountFormScreen> {
                   validator: (String? value) {
                     if (fieldValidator(value)) {
                       return 'Insira o nome da Conta';
+                    }
+                    if (accountNameValidator(value)) {
+                      return 'Já existe uma Conta com este nome';
                     }
                     return null;
                   },
