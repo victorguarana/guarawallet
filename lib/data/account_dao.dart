@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class AccountDAO {
   static const String tableSQL = '''CREATE TABLE $_tableName (
           $_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          $_name TEXT NOT NULL,
+          $_name TEXT UNIQUE NOT NULL,
           $_currentBalance REAL NOT NULL,
           $_expectedBalance REAL NOT NULL) ''';
   static const String _tableName = 'accountTable';
@@ -19,35 +19,19 @@ class AccountDAO {
     batch.insert(_tableName, toMap(account));
   }
 
+  static void update(Batch batch, Account account) {
+    batch.update(_tableName, toMap(account),
+        where: '$_id = ?', whereArgs: [account.id]);
+  }
+
   static Future<List<Account>> findAll() async {
     final Database database = await getDataBase();
     final List<Map<String, dynamic>> result = await database.query(_tableName);
     return toList(result);
   }
 
-  static void debitAccount(
-      Batch batch, double value, String accountName, bool alreadyPaid) {
-    // TODO: move this logic to model
-    if (alreadyPaid) {
-      batch.rawUpdate(
-          'UPDATE $_tableName SET $_currentBalance = $_currentBalance + $value, $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
-    } else {
-      batch.rawUpdate(
-          'UPDATE $_tableName SET $_expectedBalance = $_expectedBalance + $value WHERE $_name = "$accountName"');
-    }
-  }
-
   static void delete(Batch batch, Account account) {
     batch.delete(_tableName, where: '$_id = ${account.id}');
-  }
-
-  static void payTransaction(
-      Batch batch, double value, String accountName, bool alreadyPaid) {
-    if (alreadyPaid) {
-      value = value * -1;
-    }
-    batch.rawUpdate(
-        'UPDATE $_tableName SET $_currentBalance = $_currentBalance + $value WHERE $_name = "$accountName"');
   }
 
   // TODO: Remove this after build

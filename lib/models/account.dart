@@ -10,4 +10,18 @@ class Account {
     required this.currentBalance,
     required this.expectedBalance,
   });
+
+  void movement(double value, bool alreadyPaid) {
+    expectedBalance += value;
+    if (alreadyPaid) {
+      currentBalance += value;
+    }
+  }
+
+  void payTransaction(double value, bool alreadyPaid) {
+    if (alreadyPaid) {
+      value = value * -1;
+    }
+    currentBalance += value;
+  }
 }

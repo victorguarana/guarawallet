@@ -4,14 +4,14 @@ import 'package:guarawallet/utils/util.dart';
 import 'package:sqflite/sqflite.dart';
 
 class BankTransactionDAO {
-  static const String tableSQL = '''CREATE TABLE $_tablename 
+  static const String tableSQL = '''CREATE TABLE $_tableName 
         ($_id INTEGER PRIMARY KEY AUTOINCREMENT,
         $_name TEXT NOT NULL,
         $_value REAL NOT NULL,
         $_account TEXT NOT NULL,
         $_payDay DATE,
         $_alreadyPaid BOOLEAN NOT NULL)''';
-  static const String _tablename = 'transactionTable';
+  static const String _tableName = 'transactionTable';
 
   static const String _id = 'id';
   static const String _name = 'name';
@@ -21,25 +21,25 @@ class BankTransactionDAO {
   static const String _alreadyPaid = 'already_paid';
 
   static void insert(Batch batch, BankTransaction bankTransaction) {
-    batch.insert(_tablename, toMap(bankTransaction));
+    batch.insert(_tableName, toMap(bankTransaction));
   }
 
-  static void switchAlreadyPaid(Batch batch, BankTransaction bankTransaction) {
-    batch.update(_tablename, toMap(bankTransaction),
+  static void update(Batch batch, BankTransaction bankTransaction) {
+    batch.update(_tableName, toMap(bankTransaction),
         where: '$_id = ?', whereArgs: [bankTransaction.id]);
   }
 
   static void delete(Batch batch, BankTransaction bankTransaction) {
-    batch.delete(_tablename, where: '$_id = ${bankTransaction.id}');
+    batch.delete(_tableName, where: '$_id = ${bankTransaction.id}');
   }
 
   static void deleteAllFromAccount(Batch batch, String accountName) {
-    batch.delete(_tablename, where: '$_account = \'$accountName\'');
+    batch.delete(_tableName, where: '$_account = \'$accountName\'');
   }
 
   static Future<List<BankTransaction>> findAll() async {
     final Database database = await getDataBase();
-    final List<Map<String, dynamic>> result = await database.query(_tablename,
+    final List<Map<String, dynamic>> result = await database.query(_tableName,
         orderBy: '$_payDay DESC, $_id NULLS FIRST');
     // TODO: Put this back when pagination is ready
     // where:
@@ -49,7 +49,7 @@ class BankTransactionDAO {
 
   static Future<void> deleteAll() async {
     final Database database = await getDataBase();
-    await database.delete(_tablename);
+    await database.delete(_tableName);
   }
 
   static List<BankTransaction> toList(

@@ -5,6 +5,10 @@ import 'package:guarawallet/models/bank_transaction.dart';
 class BankTransactionsRepository extends ChangeNotifier {
   List<BankTransaction> allTransactions = [];
 
+  void notify() {
+    notifyListeners();
+  }
+
   void addLocal(BankTransaction bankTransaction) {
     allTransactions.add(bankTransaction);
     notifyListeners();
@@ -20,7 +24,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteAllFromAccountLocal(String accountName) {
+  void removeLocalByAccount(String accountName) {
     allTransactions
         .removeWhere((transaction) => transaction.account == accountName);
     notifyListeners();

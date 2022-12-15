@@ -7,6 +7,10 @@ class AccountsRepository extends ChangeNotifier {
   double generalCurrentBalance = 0;
   double generalExpectedBalance = 0;
 
+  Account findByName(String accountName) {
+    return allAccounts.singleWhere((account) => account.name == accountName);
+  }
+
   void addLocal(Account account) {
     allAccounts.add(account);
     generalCurrentBalance += account.currentBalance;
@@ -15,19 +19,21 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: Add id to model and DB and change accountName for accountID?
-  // Or make account name primary key?
-  void debitAccountLocal(double value, String accountName, bool alreadyPaid) {
-    Account accounts =
-        allAccounts.where((account) => account.name == accountName).first;
-
-    accounts.expectedBalance += value;
+  void updateAllGeneral(double value, bool alreadyPaid) {
     generalExpectedBalance += value;
 
     if (alreadyPaid) {
-      accounts.currentBalance += value;
       generalCurrentBalance += value;
     }
+
+    notifyListeners();
+  }
+
+  void updateCurrent(double value, bool alreadyPaid) {
+    if (alreadyPaid) {
+      value = value * -1;
+    }
+    generalCurrentBalance += value;
 
     notifyListeners();
   }
@@ -36,20 +42,6 @@ class AccountsRepository extends ChangeNotifier {
     allAccounts.remove(account);
     generalCurrentBalance -= account.currentBalance;
     generalExpectedBalance -= account.expectedBalance;
-
-    notifyListeners();
-  }
-
-  void payTransactionLocal(double value, String accountName, bool alreadyPaid) {
-    Account account =
-        allAccounts.where((account) => account.name == accountName).first;
-
-    if (alreadyPaid) {
-      value = value * -1;
-    }
-
-    account.currentBalance += value;
-    generalCurrentBalance += value;
 
     notifyListeners();
   }

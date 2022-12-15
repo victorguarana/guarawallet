@@ -32,14 +32,4 @@ class BankTransaction {
       payDay = null;
     }
   }
-
-  BankTransaction clone() {
-    return BankTransaction(
-        id: id,
-        payDay: payDay,
-        alreadyPaid: alreadyPaid,
-        name: name,
-        value: value,
-        account: account);
-  }
 }
