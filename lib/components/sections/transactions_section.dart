@@ -18,7 +18,7 @@ class TransactionsSection extends StatelessWidget {
           builder: (context) => const TransactionsListScreen()),
       cardContent: FutureBuilder(
         future: Provider.of<BankTransactionsRepository>(context, listen: false)
-            .loadAll(),
+            .reloadAll(),
         builder: (context, snapshot) => snapshot.connectionState ==
                 ConnectionState.waiting
             ? const Center(child: CircularProgressIndicator())

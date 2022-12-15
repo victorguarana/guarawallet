@@ -8,37 +8,6 @@ import 'package:guarawallet/repositories/bank_transactions_repository.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class BankManager {
-  static void switchAlreadyPaid(
-    BankTransaction bankTransaction,
-    BankTransactionsRepository bankTransactionsRepository,
-    AccountsRepository accountsRepository,
-  ) async {
-    Account account = accountsRepository.findByName(bankTransaction.account);
-    account.payTransaction(bankTransaction.value, bankTransaction.alreadyPaid);
-
-    DateTime? oldDate = bankTransaction.payDay;
-    bankTransaction.changePaid();
-
-    try {
-      final Database database = await getDataBase();
-      Batch batch = database.batch();
-
-      BankTransactionDAO.update(batch, bankTransaction);
-      AccountDAO.update(batch, account);
-      await batch.commit(noResult: true);
-    } on DatabaseException {
-      account.payTransaction(
-          bankTransaction.value * -1, bankTransaction.alreadyPaid);
-      bankTransaction.changePaid();
-      bankTransaction.payDay = oldDate;
-      return;
-    }
-
-    bankTransactionsRepository.notify();
-    accountsRepository.updateCurrent(
-        bankTransaction.value, bankTransaction.alreadyPaid);
-  }
-
   static Future<bool> createTransaction(
     BankTransaction bankTransaction,
     BankTransactionsRepository bankTransactionsRepository,
@@ -60,7 +29,7 @@ class BankManager {
       return false;
     }
 
-    bankTransactionsRepository.addLocal(bankTransaction);
+    bankTransactionsRepository.reloadAll();
     accountsRepository.updateAllGeneral(
         bankTransaction.value, bankTransaction.alreadyPaid);
 
@@ -81,8 +50,39 @@ class BankManager {
       return false;
     }
 
-    accountsRepository.addLocal(account);
+    accountsRepository.reloadAll();
     return true;
+  }
+
+  static void switchAlreadyPaid(
+    BankTransaction bankTransaction,
+    BankTransactionsRepository bankTransactionsRepository,
+    AccountsRepository accountsRepository,
+  ) async {
+    Account account = accountsRepository.findByName(bankTransaction.account);
+    account.payTransaction(bankTransaction.value, bankTransaction.alreadyPaid);
+
+    DateTime? oldDate = bankTransaction.payDay;
+    bankTransaction.changePaid();
+
+    try {
+      final Database database = await getDataBase();
+      Batch batch = database.batch();
+
+      BankTransactionDAO.update(batch, bankTransaction);
+      AccountDAO.update(batch, account);
+      await batch.commit(noResult: true);
+    } on DatabaseException catch (e) {
+      account.payTransaction(
+          bankTransaction.value * -1, bankTransaction.alreadyPaid);
+      bankTransaction.changePaid();
+      bankTransaction.payDay = oldDate;
+      return;
+    }
+
+    bankTransactionsRepository.notify();
+    accountsRepository.updateCurrent(
+        bankTransaction.value, bankTransaction.alreadyPaid);
   }
 
   static Future<bool> deleteAccount(

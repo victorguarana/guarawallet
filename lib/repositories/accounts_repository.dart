@@ -30,7 +30,7 @@ class AccountsRepository extends ChangeNotifier {
   }
 
   void updateCurrent(double value, bool alreadyPaid) {
-    if (alreadyPaid) {
+    if (!alreadyPaid) {
       value = value * -1;
     }
     generalCurrentBalance += value;
@@ -46,7 +46,7 @@ class AccountsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadAll() async {
+  Future<void> reloadAll() async {
     allAccounts = await AccountDAO.findAll();
 
     generalCurrentBalance = 0;

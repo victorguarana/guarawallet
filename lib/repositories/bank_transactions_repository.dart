@@ -30,7 +30,7 @@ class BankTransactionsRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadAll() async {
+  Future<void> reloadAll() async {
     allTransactions = await BankTransactionDAO.findAll();
 
     notifyListeners();
