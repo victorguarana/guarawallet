@@ -3,11 +3,11 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guarawallet/components/sections/accounts_section.dart';
 import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
-import 'package:guarawallet/components/sections/transactions_section.dart';
+import 'package:guarawallet/components/sections/bank_transactions_section.dart';
 import 'package:guarawallet/data/account_dao.dart';
 import 'package:guarawallet/data/bank_transaction_dao.dart';
 import 'package:guarawallet/screens/account_form_screen.dart';
-import 'package:guarawallet/screens/transaction_form_screen.dart';
+import 'package:guarawallet/screens/bank_transaction_form_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10, bottom: 120),
               children: const [
                 AccountsSection(),
-                TransactionsSection(),
+                BankTransactionsSection(),
                 // GoalsSection(),
               ],
             ),
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const TransactionFormScreen(isDebit: true),
+                      const BankTransactionFormScreen(isDebit: true),
                 ),
               );
             },
@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const TransactionFormScreen(isDebit: false),
+                      const BankTransactionFormScreen(isDebit: false),
                 ),
               );
             },

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:guarawallet/components/list_card.dart';
-import 'package:guarawallet/components/transaction_widget.dart';
+import 'package:guarawallet/components/bank_transaction_widget.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
-import 'package:guarawallet/screens/transactions_list_screen.dart';
+import 'package:guarawallet/screens/bank_transactions_list_screen.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsSection extends StatelessWidget {
+class BankTransactionsSection extends StatelessWidget {
   static const int _listSize = 5;
-  const TransactionsSection({super.key});
+  const BankTransactionsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class TransactionsSection extends StatelessWidget {
       cardTitle: 'Transações',
       cardHeight: 305,
       listScreenRouter: () => MaterialPageRoute(
-          builder: (context) => const TransactionsListScreen()),
+          builder: (context) => const BankTransactionsListScreen()),
       cardContent: FutureBuilder(
         future: Provider.of<BankTransactionsRepository>(context, listen: false)
             .reloadAll(),
@@ -35,7 +35,7 @@ class TransactionsSection extends StatelessWidget {
                           : transactions.allTransactions.length,
                       itemBuilder: (context, index) {
                         return Column(children: [
-                          TransactionWidget(
+                          BankTransactionWidget(
                               transaction: transactions.allTransactions[index]),
                           const ListCardDivider()
                         ]);

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guarawallet/components/list_card.dart';
-import 'package:guarawallet/components/transaction_widget.dart';
+import 'package:guarawallet/components/bank_transaction_widget.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 import 'package:guarawallet/repositories/accounts_repository.dart';
 import 'package:guarawallet/repositories/bank_manager.dart';
 import 'package:guarawallet/repositories/bank_transactions_repository.dart';
-import 'package:guarawallet/screens/transaction_form_screen.dart';
+import 'package:guarawallet/screens/bank_transaction_form_screen.dart';
 import 'package:guarawallet/themes/theme_colors.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsListScreen extends StatefulWidget {
-  const TransactionsListScreen({super.key});
+class BankTransactionsListScreen extends StatefulWidget {
+  const BankTransactionsListScreen({super.key});
 
   @override
-  State<TransactionsListScreen> createState() => _TransactionsListScreenState();
+  State<BankTransactionsListScreen> createState() =>
+      _TransactionsListScreenState();
 }
 
-class _TransactionsListScreenState extends State<TransactionsListScreen> {
+class _TransactionsListScreenState extends State<BankTransactionsListScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
@@ -83,7 +84,7 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const TransactionFormScreen(isDebit: true),
+                      const BankTransactionFormScreen(isDebit: true),
                 ),
               );
             },
@@ -97,7 +98,7 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const TransactionFormScreen(isDebit: false),
+                      const BankTransactionFormScreen(isDebit: false),
                 ),
               );
             },
@@ -190,7 +191,7 @@ class __AccountItemState extends State<_AccountItem> {
       },
       child: Column(children: [
         const ListCardDivider(),
-        TransactionWidget(transaction: widget.bankTransaction),
+        BankTransactionWidget(transaction: widget.bankTransaction),
         const ListCardDivider()
       ]),
     );

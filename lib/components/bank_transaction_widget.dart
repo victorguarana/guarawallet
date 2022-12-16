@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:guarawallet/components/real_text.dart';
 import 'package:guarawallet/models/bank_transaction.dart';
 
-class TransactionWidget extends StatelessWidget {
+class BankTransactionWidget extends StatelessWidget {
   final BankTransaction transaction;
-  const TransactionWidget({super.key, required this.transaction});
+  const BankTransactionWidget({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
