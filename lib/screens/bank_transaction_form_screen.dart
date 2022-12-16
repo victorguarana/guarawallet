@@ -9,15 +9,16 @@ import 'package:guarawallet/themes/theme_colors.dart';
 import 'package:guarawallet/utils/util.dart';
 import 'package:provider/provider.dart';
 
-class TransactionFormScreen extends StatefulWidget {
+class BankTransactionFormScreen extends StatefulWidget {
   final bool isDebit;
-  const TransactionFormScreen({super.key, required this.isDebit});
+  const BankTransactionFormScreen({super.key, required this.isDebit});
 
   @override
-  State<TransactionFormScreen> createState() => TransactionFormScreenState();
+  State<BankTransactionFormScreen> createState() =>
+      TransactionFormScreenState();
 }
 
-class TransactionFormScreenState extends State<TransactionFormScreen> {
+class TransactionFormScreenState extends State<BankTransactionFormScreen> {
   late BankTransactionsRepository bankTransactionsRepository;
   late AccountsRepository accountsRepository;
 
