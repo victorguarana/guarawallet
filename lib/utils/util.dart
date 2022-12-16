@@ -33,8 +33,6 @@ class Util {
       valueDouble = (double.parse(value) * 100).truncateToDouble() / 100;
       return NumberFormat.decimalPattern('pt_Br').format(valueDouble);
     } on FormatException {
-      // TODO: Remove this print before build?
-      print('Format Exception');
       return value;
     }
   }

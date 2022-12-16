@@ -34,12 +34,6 @@ class AccountDAO {
     batch.delete(_tableName, where: '$_id = ${account.id}');
   }
 
-  // TODO: Remove this after build
-  static Future<void> deleteAll() async {
-    final Database database = await getDataBase();
-    await database.delete(_tableName);
-  }
-
   static List<Account> toList(List<Map<String, dynamic>> accountMaps) {
     final List<Account> accounts = [];
 

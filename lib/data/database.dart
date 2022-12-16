@@ -11,20 +11,6 @@ Future<Database> getDataBase() async {
       db.execute(BankTransactionDAO.tableSQL);
       db.execute(AccountDAO.tableSQL);
     },
-    // TODO: Remove onUpgrade and onDowngrade before build apk
-    onUpgrade: (db, oldVersion, newVersion) {
-      _resetDB(db);
-    },
-    onDowngrade: (db, oldVersion, newVersion) {
-      _resetDB(db);
-    },
     version: 1,
   );
-}
-
-void _resetDB(Database db) {
-  db.execute('DROP TABLE accountTable');
-  db.execute('DROP TABLE transactionTable');
-  db.execute(BankTransactionDAO.tableSQL);
-  db.execute(AccountDAO.tableSQL);
 }

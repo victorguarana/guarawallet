@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:guarawallet/components/sections/accounts_section.dart';
-import 'package:guarawallet/components/sections/goals_section.dart';
 import 'package:guarawallet/components/sections/overview_section.dart';
 import 'package:guarawallet/components/sections/bank_transactions_section.dart';
 import 'package:guarawallet/data/account_dao.dart';
@@ -24,7 +23,6 @@ class HomeScreen extends StatelessWidget {
               children: const [
                 AccountsSection(),
                 BankTransactionsSection(),
-                // GoalsSection(),
               ],
             ),
           )
@@ -73,22 +71,6 @@ class HomeScreen extends StatelessWidget {
                   builder: (context) => const AccountFormScreen(),
                 ),
               );
-            },
-          ),
-          SpeedDialChild(
-            backgroundColor: Colors.orange,
-            label: 'Limpar transações (Sem refresh)',
-            child: const Icon(Icons.clear_all),
-            onTap: () {
-              BankTransactionDAO.deleteAll();
-            },
-          ),
-          SpeedDialChild(
-            backgroundColor: Colors.orange,
-            label: 'Limpar Contas (Sem refresh)',
-            child: const Icon(Icons.clear_all),
-            onTap: () {
-              AccountDAO.deleteAll();
             },
           ),
         ],
